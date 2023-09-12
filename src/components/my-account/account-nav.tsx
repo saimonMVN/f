@@ -23,19 +23,16 @@ export default function AccountNav({ options }: { options: Option[] }) {
         const menuPath = `/${menuPathname[0]}`;
 
         return (
-          <Link key={item.slug} href={item.slug}>
-            <a
-              className={`flex items-center cursor-pointer text-sm lg:text-15px text-skin-base py-3.5 px-3.5 xl:px-4 2xl:px-5 mb-1 hover:text-skin-primary ${
-                mainPath === menuPath
-                  ? 'bg-skin-two font-medium'
-                  : 'font-normal'
-              }`}
-            >
+          <Link key={item.slug} href={item.slug}
+          className={`flex items-center cursor-pointer text-sm lg:text-15px text-skin-base py-3.5 px-3.5 xl:px-4 2xl:px-5 mb-1 hover:text-skin-primary ${
+            mainPath === menuPath
+              ? 'bg-skin-two font-medium'
+              : 'font-normal'
+          }`}>
               <span className="w-6 me-1 ">
                 {item.icon}
               </span>
               <span className="ps-1.5">{t(item.name)}</span>
-            </a>
           </Link>
         );
       })}

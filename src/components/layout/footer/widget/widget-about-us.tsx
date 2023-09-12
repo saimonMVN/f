@@ -45,8 +45,7 @@ const WidgetAbout: React.FC<AboutProps> = ({ social, className }) => {
               className="transition hover:opacity-80"
               key={`social-list--key${item.id}`}
             >
-              <Link href={item.path ? item.path : '/#'}>
-                <a target="_blank" rel="noreferrer">
+              <Link href={item.path ? item.path : '/#'} target='_blank' rel='noreferrer'>
                   <Image
                     src={item.image}
                     alt={item.name}
@@ -54,7 +53,6 @@ const WidgetAbout: React.FC<AboutProps> = ({ social, className }) => {
                     width={item.width}
                     className="transform scale-85 md:scale-100"
                   />
-                </a>
               </Link>
             </li>
           ))}

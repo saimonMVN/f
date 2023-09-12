@@ -69,16 +69,12 @@ const CheckoutCard: React.FC = () => {
       </div>
       <Text className="mt-8">
         {t('text-by-placing-your-order')}{' '}
-        <Link href={ROUTES.TERMS}>
-          <a className="text-skin-primary underline font-medium">
+        <Link href={ROUTES.TERMS} className="text-skin-primary underline font-medium">
             {t('text-terms-of-service')}{' '}
-          </a>
         </Link>
         {t('text-and')}{' '}
-        <Link href={ROUTES.PRIVACY}>
-          <a className="text-skin-primary underline font-medium">
+        <Link href={ROUTES.PRIVACY} className="text-skin-primary underline font-medium">
             {t('text-privacy')}
-          </a>
         </Link>
         . {t('text-credit-debit')}
       </Text>

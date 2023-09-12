@@ -40,9 +40,7 @@ const ListingTabsList: React.FC<Props> = ({className = 'mb-12 pb-0.5', data}) =>
                                                     query: { category: currentItem.slug },
                                                 }}
                                             >
-                                                <a>
                                                     {currentItem.name}
-                                                </a>
                                             </Link>
                                         </li>
                                     );
@@ -72,11 +70,10 @@ const ListingTabsList: React.FC<Props> = ({className = 'mb-12 pb-0.5', data}) =>
                                                                 pathname: ROUTES.SEARCH,
                                                                 query: { category: currentItem.slug },
                                                             }}
+                                                            className={"py-2 px-4 block whitespace-no-wrap"}
                                                         >
-                                                            <a className={"py-2 px-4 block whitespace-no-wrap"}>
                                                                 {currentItem.name}
-                                                            </a>
-                                                        </Link>
+                                                         </Link>
                                                     </li>
                                                 );
                                             })}

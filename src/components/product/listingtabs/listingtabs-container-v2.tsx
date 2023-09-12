@@ -67,8 +67,8 @@ const ListingTabsContainer: React.FC<Props> = ({data,category, isLoading, error,
                             pathname: ROUTES.SEARCH,
                             query: { category: category?.slug },
                         }}
+                        title={category?.name}
                     >
-                        <a title={category?.name} >
                             <div className="card-img-container flex overflow-hidden relative">
                                 <Image
                                     src={banner_url ?? categoryPlaceholder}
@@ -78,9 +78,6 @@ const ListingTabsContainer: React.FC<Props> = ({data,category, isLoading, error,
                                     quality={100}
                                 />
                             </div>
-                        </a>
-
-
                     </Link>
                 </div>
             )}

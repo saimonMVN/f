@@ -29,13 +29,10 @@ const CategoryListCard: React.FC<Props> = ({
     const SUBCATEGORIES_LIMITS = 5;
     return (
         <div className={`wb-categories__items  ${dir == 'rtl' ? 'pl-4': 'pr-4'}`}>
-            <Link href={href}>
-                <a
-                    className={cn(
+            <Link href={href} className={cn(
                         'group flex justify-between items-center px-0 transition pb-5',
                         className
-                    )}
-                >
+                    )}>
                     <Image
                         src={image?.original ?? categoryPlaceholder}
                         alt={name || t('text-category-thumbnail')}
@@ -43,7 +40,6 @@ const CategoryListCard: React.FC<Props> = ({
                         height={160}
                         className="bg-sink-thumbnail object-cover transition duration-200 ease-in-out transform group-hover:opacity-80"
                     />
-                </a>
             </Link>
 
             <h3 className="text-[16px] text-skin-base capitalize  font-medium hover:text-skin-primary">
