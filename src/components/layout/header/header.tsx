@@ -24,6 +24,9 @@ import { getDirection } from '@utils/get-direction';
 import {useRouter} from "next/router";
 import CategoryDropdownSidebar from "@components/category/category-dropdown-sidebar";
 import MobileAllCategories from "@components/layout/header/mobile-all-categories";
+import { useProductCategories } from 'medusa-react';
+import CategoriesHelper from '@utils/SDK/CategoriesHelper';
+import { useAccount } from '@lib/context/account-context';
 const AuthMenu = dynamic(() => import('./auth-menu'), {ssr: false});
 const CartButton = dynamic(() => import('@components/cart/cart-button'), {
     ssr: false,
@@ -45,28 +48,43 @@ const Header: React.FC = () => {
         closeSidebar,
         openSearch,
         closeSearch,
-        isAuthorized,
     } = useUI();
     const {openModal} = useModalAction();
     const siteHeaderRef = useRef() as DivElementRef;
     const siteSearchRef = useRef() as DivElementRef;
     const [categoryMenu, setCategoryMenu] = useState(Boolean(false));
-    const { locale } = useRouter();
+    const {locale} = useRouter();
     const dir = getDirection(locale);
-    const contentWrapperCSS = dir === 'ltr' ? { left: 0 } : { right: 0 };
+    const contentWrapperCSS = dir === 'ltr' ? {left: 0} : {right: 0};
     AddActiveScroll(siteHeaderRef, 130);
     useOnClickOutside(siteSearchRef, () => closeSearch());
+    const {
+        product_categories,
+        isLoading
+    } = useProductCategories({include_descendants_tree:true})
+
+  const menuData = CategoriesHelper.pushCategoriesIntoMenuData(
+      // @ts-ignore
+    site_header.menu,
+    product_categories
+  );
+  const onlyCategoriesData = CategoriesHelper.getCategories(product_categories)
+      
+    const { customer } = useAccount()
+    const isAuthorized = customer ? true:false;
 
     function handleLogin() {
         openModal('LOGIN_VIEW');
     }
 
-    function handleCategoryMenu() {
-        setCategoryMenu(!categoryMenu);
-    }
-    function handleMobileAllCategories() {
-        return openMobileAllCategories();
-    }
+  function handleCategoryMenu() {
+    setCategoryMenu(!categoryMenu);
+  }
+
+  function handleMobileAllCategories() {
+    return openMobileAllCategories();
+  }
+
 
     return (
         <>

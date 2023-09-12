@@ -10,6 +10,7 @@ import NotificationIcon from '@components/icons/account-notification';
 import HelpIcon from '@components/icons/account-help';
 import NoticeIcon from '@components/icons/account-notice';
 import { IoSettingsOutline } from 'react-icons/io5';
+import WithAuth from '@components/hoc/withAuth';
 
 const accountMenu = [
   {
@@ -79,4 +80,4 @@ const AccountLayout: React.FunctionComponent<{}> = ({ children }) => {
   );
 };
 
-export default AccountLayout;
+export default WithAuth(AccountLayout);
