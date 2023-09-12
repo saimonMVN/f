@@ -41,20 +41,22 @@ const HeaderMenu: React.FC<MenuProps> = ({data, className,bgPrimary}) => {
                         )}
                     </Link>
 
-                    {item?.subMenu && Array.isArray(item.subMenu) && (
+                    {item?.subMenu && Array.isArray(item.subMenu) && item.subMenu.length > 0 &&  (
                         <>
                             {item?.type != 'mega' ? (
                                 <div
                                     className="subMenu shadow-dropDown bg-skin-fill z-30 absolute start-0 opacity-0 group-hover:opacity-100">
                                     <ul className="text-body text-sm py-5">
                                         {item.subMenu.map((menu: any, index: number) => {
+
+                                            const hasSubMenu = (menu.subMenu && Array.isArray(menu.subMenu) && menu.subMenu.length > 0)
                                             const dept: number = 1;
                                             const menuName: string = `sidebar-menu-${dept}-${index}`;
                                             return (
                                                 <ListMenu
                                                     dept={dept}
                                                     data={menu}
-                                                    hasSubMenu={menu.subMenu}
+                                                    hasSubMenu={hasSubMenu}
                                                     menuName={menuName}
                                                     key={menuName}
                                                     menuIndex={index}

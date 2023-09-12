@@ -67,7 +67,6 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
                 </StoreProvider>
               </CartProvider>
             </CartDropdownProvider>
-
           </Hydrate>
           {/* <ReactQueryDevtools /> */}
         </MedusaProvider>

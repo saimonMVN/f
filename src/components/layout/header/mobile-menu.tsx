@@ -15,6 +15,8 @@ import {
   IoLogoYoutube,
   IoClose,
 } from 'react-icons/io5';
+import {useProductCategories} from "medusa-react";
+import CategoriesHelper from "@utils/SDK/CategoriesHelper";
 
 const social = [
   {
@@ -52,6 +54,19 @@ export default function MobileMenu() {
   const { site_header } = siteSettings;
   const { closeSidebar } = useUI();
   const { t } = useTranslation('menu');
+
+
+  const {
+    product_categories,
+    isLoading
+  } = useProductCategories({include_descendants_tree:true})
+
+  // @ts-ignore
+  const menuData = CategoriesHelper.pushCategoriesIntoMenuData(site_header.menu, product_categories)
+
+
+
+
   const handleArrowClick = (menuName: string) => {
     let newActiveMenus = [...activeMenus];
     if (newActiveMenus.includes(menuName)) {
@@ -118,13 +133,14 @@ export default function MobileMenu() {
     return (
       <ul className={cn('mobile-sub-menu', dept > 2 && '-ms-4')}>
         {data?.map((menu: any, index: number) => {
+          const hasSubMenu = (menu.subMenu && Array.isArray(menu.subMenu) && menu.subMenu.length > 0)
           const menuName: string = `sidebar-submenu-${dept}-${menuIndex}-${index}`;
 
           return (
             <ListMenu
               dept={dept}
               data={menu}
-              hasSubMenu={menu.subMenu}
+              hasSubMenu={hasSubMenu}
               menuName={menuName}
               key={menuName}
               menuIndex={index}
@@ -156,7 +172,8 @@ export default function MobileMenu() {
         <Scrollbar className="menu-scrollbar flex-grow mb-auto">
           <div className="flex flex-col py-1 px-0 text-skin-base">
             <ul className="mobile-menu">
-              {site_header.menu.map((menu, index) => {
+              {menuData.map((menu, index) => {
+                const hasSubMenu = (menu.subMenu && Array.isArray(menu.subMenu) && menu.subMenu.length > 0)
                 const dept: number = 1;
                 const menuName: string = `sidebar-menu-${dept}-${index}`;
 
@@ -164,7 +181,7 @@ export default function MobileMenu() {
                   <ListMenu
                     dept={dept}
                     data={menu}
-                    hasSubMenu={menu.subMenu}
+                    hasSubMenu={hasSubMenu}
                     menuName={menuName}
                     key={menuName}
                     menuIndex={index}
