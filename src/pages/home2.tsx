@@ -14,7 +14,7 @@ import {
   homeTwoSidebar as heroSidebar,
   bannerDiscount,
 } from '@framework/static/banner';
-import { GetStaticProps } from 'next';
+import { GetServerSideProps, GetStaticProps } from 'next';
 import { QueryClient } from 'react-query';
 import { dehydrate } from 'react-query/hydration';
 import { API_ENDPOINTS } from '@framework/utils/api-endpoints';
@@ -32,11 +32,18 @@ import ListingTabsClothFeed from '@components/product/feeds/listingtabs-cloth-fe
 import ProductWithBestDeals from '@components/product/product-with-best-deals';
 import { useRouter } from 'next/router';
 import { getDirection } from '@utils/get-direction';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import Cookies from 'js-cookie';
+import { AppConst } from '@utils/app-const';
+import { fetchProductsList } from 'src/lib/data';
 
-export default function Home() {
+interface IProductPropsType {
+  products: PricedProduct[];
+  error?: string | undefined | null;
+}
+export default function Home({ products, error }: IProductPropsType) {
   const { locale } = useRouter();
   const dir = getDirection(locale);
-  // commit
   return (
     <>
       <Seo
@@ -66,7 +73,7 @@ export default function Home() {
         <FeatureCarousel />
       </Container>
       <Container>
-        <div className="grid grid-cols-12 gap-4 grid-cols-1 xl:gap-8">
+        <div className="grid grid-cols-12 gap-4 xl:gap-8">
           <div className="maincontent-left col-span-12 lg:col-span-3 2xl:col-span-2">
             <BannerGrid data={heroSidebar} grid={1} className="relative mb-8" />
             <BestSellerSidebarProductFeed />
@@ -76,7 +83,7 @@ export default function Home() {
           </div>
           <div className="maincontent-right col-span-12  lg:col-span-9 2xl:col-span-10">
             <ProductWithBestDeals />
-            <ListingTabsElectronicFeed />
+            <ListingTabsElectronicFeed colSiderbar={false} category={undefined} products={products} />
             <BannerGridTwo
               data={bannerGridHero}
               className="mb-8 lg:mb-12"
@@ -102,20 +109,31 @@ export default function Home() {
 
 Home.Layout = Layout;
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  const queryClient = new QueryClient();
+export const getServerSideProps: GetServerSideProps<
+  IProductPropsType
+> = async ({ locale }) => {
+  let products: PricedProduct[] = [];
+  let error: string | undefined;
 
-  await queryClient.prefetchQuery(
-    [
-      API_ENDPOINTS.BEST_SELLER_PRODUCTS,
-      { limit: LIMITS.BEST_SELLER_PRODUCTS_LIMITS },
-    ],
-    fetchBestSellerProducts
-  );
+  try {
+    const cart_id = Cookies.get(AppConst.CART_COOKIES_ID);
+
+    let res = await fetchProductsList({
+      pageParam: 0,
+      queryParams: { cart_id },
+    });
+
+    products = res.response.products;
+  } catch (err) {
+    const errorMessage: any = err;
+    error = errorMessage.message;
+  }
 
   return {
     props: {
-      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
+      products: products,
+      error: error ? error : null,
+
       ...(await serverSideTranslations(locale!, [
         'common',
         'forms',
@@ -123,6 +141,5 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         'footer',
       ])),
     },
-    revalidate: 60,
   };
 };

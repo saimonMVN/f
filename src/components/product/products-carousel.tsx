@@ -1,6 +1,5 @@
 import SectionHeader from '@components/common/section-header';
 import ProductCard from '@components/product/product-cards/product-card';
-import { Product } from '@framework/types';
 import Carousel from '@components/ui/carousel/carousel';
 import { SwiperSlide } from '@components/ui/carousel/slider';
 import Alert from '@components/ui/alert';
@@ -10,12 +9,16 @@ import ProductCardLoader from '@components/ui/loaders/product-card-loader';
 import cn from 'classnames';
 import { useRouter } from 'next/router';
 import { getDirection } from '@utils/get-direction';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import { useCart } from 'medusa-react';
+import usePreviews from 'src/lib/hooks/use-previews';
+import { ProductProvider } from 'src/lib/context/product-context';
 
 interface ProductsCarouselProps {
   sectionHeading: string;
   categorySlug?: string;
   className?: string;
-  products?: Product[];
+  products: PricedProduct[];
   loading: boolean;
   error?: string;
   limit?: number;
@@ -66,6 +69,10 @@ const ProductsCarousel: React.FC<ProductsCarouselProps> = ({
   const dir = getDirection(locale);
   if(width!  < 767 ) limit = 4;
 
+  const { cart } = useCart()
+
+  const previews = usePreviews({ products, region: cart?.region })
+
   return (
     <div
       className={cn(
@@ -106,12 +113,12 @@ const ProductsCarousel: React.FC<ProductsCarouselProps> = ({
               ))
             ) : (
               <>
-                {products?.slice(0, limit).map((product: any, idx) => (
+                {previews?.slice(0, limit).map((product, idx) => (
                   <SwiperSlide
                     key={`${uniqueKey}-${idx}`}
                     className=""
                   >
-                    <ProductCard product={product} />
+                     <ProductProvider product={products[idx]}><ProductCard pricedProduct={products[idx]} previewProduct={product} /></ProductProvider>
                   </SwiperSlide>
                 ))}
                 <SwiperSlide className="p-2.5 flex items-center justify-center">

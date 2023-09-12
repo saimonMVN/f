@@ -4,51 +4,37 @@ import { generateCartItem } from '@utils/generate-cart-item';
 import PlusIcon from '@components/icons/plus-icon';
 import useWindowSize from '@utils/use-window-size';
 import { useTranslation } from 'next-i18next';
+import { useStore } from 'src/lib/context/store-context';
 interface Props {
-  data: any;
-  variation?: any;
-  disabled?: boolean;
   isBorderRounded?: boolean;
+  variantId: string;
+  quantity: number;
 }
 
-export const AddToCart = ({ data, variation, disabled,isBorderRounded }: Props) => {
+export const AddToCart = ({ variantId, quantity, isBorderRounded }: Props) => {
   const { width } = useWindowSize();
   const { t } = useTranslation('common');
-  const {
-    addItemToCart,
-    removeItemFromCart,
-    isInStock,
-    getItemFromCart,
-    isInCart,
-  } = useCart();
-  const item = generateCartItem(data!, variation);
+  const { addItem } = useStore()
+
+  const item = {
+    variantId,
+    quantity
+  }
+
   const handleAddClick = (
     e: React.MouseEvent<HTMLButtonElement | MouseEvent>
   ) => {
     e.stopPropagation();
-    addItemToCart(item, 1);
+    addItem(item);
   };
-  const handleRemoveClick = (e: any) => {
-    e.stopPropagation();
-    removeItemFromCart(item.id);
-  };
-  const outOfStock = isInCart(item?.id) && !isInStock(item.id);
-  const iconSize = width! > 480 ? '19' : '17';
-  return !isInCart(item?.id) ? (
+  return (
     <button
-        className={`min-w-[150px] px-4 py-2 bg-skin-primary text-skin-inverted text-[13px] items-center justify-center focus:outline-none focus-visible:outline-none ${isBorderRounded ? 'rounded': 'rounded-full'}`}
+      className={`w-full min-w-[150px] px-4 py-2.5 bg-skin-primary text-skin-inverted text-[14px] items-center justify-center focus:outline-none focus-visible:outline-none `}
       aria-label="Count Button"
       onClick={handleAddClick}
-      disabled={disabled || outOfStock}
+      // disabled={disabled || outOfStock}
     >
       {t('text-add-to-cart')}
     </button>
-  ) : (
-    <Counter
-      value={getItemFromCart(item.id).quantity}
-      onDecrement={handleRemoveClick}
-      onIncrement={handleAddClick}
-      disabled={outOfStock}
-    />
-  );
+  )
 };

@@ -11,63 +11,66 @@ import { AddToCart } from '@components/product/add-to-cart';
 import { useTranslation } from 'next-i18next';
 import { productPlaceholder } from '@assets/placeholders';
 import {ROUTES} from "@utils/routes";
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import { ProductPreviewType } from 'src/interfaces/global';
+import { isSingleVariantInStockOrBackorder } from 'src/lib/util/is-single-variant-inStock-or-backorder';
 
 interface ProductProps {
-  product: Product;
-  className?: string;
+  previewProduct: ProductPreviewType;
+  pricedProduct: PricedProduct;
 }
-function RenderPopupOrAddToCart({ data }: { data: Product }) {
+function RenderPopupOrAddToCart({
+  previewProduct,
+  pricedProduct,
+}: ProductProps) {
   const { t } = useTranslation('common');
-  const { id, quantity, product_type } = data ?? {};
+  const { id, ...rest } = pricedProduct ?? {};
   const { width } = useWindowSize();
   const { openModal } = useModalAction();
-  const { isInCart, isInStock } = useCart();
-  const outOfStock = isInCart(id) && !isInStock(id);
   function handlePopupView() {
-    openModal('PRODUCT_VIEW', data);
+    openModal('PRODUCT_VIEW', {
+      pricedProduct: pricedProduct,
+      previewProduct: previewProduct,
+    });
   }
-  if (Number(quantity) < 1 || outOfStock) {
-    return (
-      <span className="text-[11px] text-skin-inverted uppercase inline-block bg-skin-red rounded-full px-2.5 pt-1 pb-[3px] mx-0.5 sm:mx-1">
-        {t('text-out-stock')}
-      </span>
-    );
-  }
-  if (product_type === 'variable') {
+  if (isSingleVariantInStockOrBackorder(pricedProduct.variants) && pricedProduct.variants[0].id) {
+    return <AddToCart variantId = {pricedProduct.variants[0].id} quantity = {1} />
+  } 
+  else if(pricedProduct.variants.length > 1){
     return (
       <button
-        className="min-w-[150px] px-4 py-2 bg-skin-primary rounded-full  text-skin-inverted text-[13px] items-center justify-center focus:outline-none focus-visible:outline-none"
+        className="w-full min-w-[150px] px-4 py-2.5 bg-skin-primary text-skin-inverted text-[14px] items-center justify-center focus:outline-none focus-visible:outline-none"
         aria-label="Count Button"
         onClick={handlePopupView}
       >
         {t('text-product-details')}
       </button>
     );
+  } else {
+    return (
+      <span className="text-[11px] text-skin-inverted uppercase inline-block bg-skin-red rounded-full px-2.5 pt-1 pb-[3px] mx-0.5 sm:mx-1">
+        {t('Out-stock')}
+      </span>
+    );
   }
-  return <AddToCart data={data} />;
 }
-const ProductCard: React.FC<ProductProps> = ({ product, className }) => {
-  const { name, image, unit, slug, product_type } = product ?? {};
+
+const ProductCard = ({
+  previewProduct,
+  pricedProduct,
+  className
+}: {
+  previewProduct: ProductPreviewType;
+  pricedProduct: PricedProduct;
+  className?: string
+}) => {
   const { openModal } = useModalAction();
   const { t } = useTranslation('common');
   const { width } = useWindowSize();
   const iconSize = width! > 1024 ? '20' : '17';
-  const { price, basePrice, discount } = usePrice({
-    amount: product?.sale_price ? product?.sale_price : product?.price,
-    baseAmount: product?.price,
-    currencyCode: 'USD',
-  });
-  const { price: minPrice } = usePrice({
-    amount: product?.min_price ?? 0,
-    currencyCode: 'USD',
-  });
-  const { price: maxPrice } = usePrice({
-    amount: product?.max_price ?? 0,
-    currencyCode: 'USD',
-  });
 
   function handlePopupView() {
-    openModal('PRODUCT_VIEW', product);
+    openModal('PRODUCT_VIEW', { pricedProduct, previewProduct });
   }
   return (
     <article
@@ -75,13 +78,13 @@ const ProductCard: React.FC<ProductProps> = ({ product, className }) => {
         'flex flex-col product-card relative card-image--jump px-2 sm:px-3 overflow-hidden  h-full',
         className
       )}
-      title={name}
+      title={previewProduct.title}
     >
       <div className="relative flex-shrink-0  mt-4">
         <div className="card-img-container flex overflow-hidden max-w-[230px] mx-auto relative">
           <Image
-            src={image?.thumbnail ?? productPlaceholder}
-            alt={name || 'Product Image'}
+            src={previewProduct.thumbnail ?? productPlaceholder}
+            alt={previewProduct.title || 'Product Image'}
             width={230}
             height={200}
             quality={100}
@@ -89,8 +92,8 @@ const ProductCard: React.FC<ProductProps> = ({ product, className }) => {
           />
         </div>
         <div className="w-full h-full absolute top-0 pt-2.5 md:pt-3.5 z-10 -mx-0.5 sm:-mx-1">
-          {discount && (
-            <span className="text-[10px]  text-skin-inverted uppercase inline-block bg-skin-primary rounded-sm px-2.5 pt-1 pb-[3px] mx-0.5 sm:mx-1">
+          {previewProduct.price?.price_type === 'sale' && (
+            <span className="text-[10px]  text-skin-inverted uppercase inline-block bg-skin-primary rounded-sm px-2.5 pt-1 pb-[3px] m-2">
               {t('text-on-sale')}
             </span>
           )}
@@ -105,26 +108,32 @@ const ProductCard: React.FC<ProductProps> = ({ product, className }) => {
       </div>
 
       <div className="flex flex-col mb-2 h-full overflow-hidden text-center relative">
-        <div className="text-sm mt-auto leading-6 text-gray-400 mb-1.5">{unit}</div>
+        <div className="text-sm mt-auto leading-6 text-gray-400 mb-1.5">
+                    {/* product collection  */}
+                    {pricedProduct.collection?.title}
+        </div>
         <Link
-            href={`${ROUTES.PRODUCTS}/${slug}`}
+            href={`${ROUTES.PRODUCTS}/${previewProduct.handle}`}
             className="text-skin-base text-sm leading-5  line-clamp-2 mb-2 hover:text-skin-primary"
         >
-          {name}
+          {previewProduct.title}
         </Link>
         <div className="space-s-2 mb-4 lg:mb-4">
           <span className="inline-block font-semibold text-15px lg:text-base text-skin-primary">
-            {product_type === 'variable' ? `${minPrice} - ${maxPrice}` : price}
+          {previewProduct.price?.calculated_price}
           </span>
-          {basePrice && (
-              <del className="text-sm text-gray-400 text-opacity-70">
-                {basePrice}
-              </del>
+          {previewProduct.price?.price_type === 'sale' && (
+            <del className="text-sm text-gray-400 text-opacity-70">
+              {previewProduct.price.original_price}
+            </del>
           )}
 
         </div>
         <div className="inline-block product-cart-button">
-          <RenderPopupOrAddToCart data={product} />
+        <RenderPopupOrAddToCart
+            pricedProduct={pricedProduct}
+            previewProduct={previewProduct}
+          />
         </div>
       </div>
     </article>

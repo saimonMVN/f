@@ -1,8 +1,9 @@
 import {ROUTES} from '@utils/routes';
 import ProductsCarousel from '@components/product/products-carousel';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
 interface Props {
-    data: any;
+    data: PricedProduct[];
     isLoading: any;
     error?: any;
     colSiderbar?: boolean;
