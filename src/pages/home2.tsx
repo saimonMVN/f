@@ -44,6 +44,7 @@ interface IProductPropsType {
 export default function Home({ products, error }: IProductPropsType) {
   const { locale } = useRouter();
   const dir = getDirection(locale);
+
   return (
     <>
       <Seo
@@ -83,7 +84,7 @@ export default function Home({ products, error }: IProductPropsType) {
           </div>
           <div className="maincontent-right col-span-12  lg:col-span-9 2xl:col-span-10">
             <ProductWithBestDeals />
-            <ListingTabsElectronicFeed colSiderbar={false} category={undefined} products={products} />
+            <ListingTabsElectronicFeed colSiderbar={false} category={undefined} products={products} error={error} />
             <BannerGridTwo
               data={bannerGridHero}
               className="mb-8 lg:mb-12"
@@ -111,16 +112,33 @@ Home.Layout = Layout;
 
 export const getServerSideProps: GetServerSideProps<
   IProductPropsType
-> = async ({ locale }) => {
+> = async ({ locale, req }) => {
   let products: PricedProduct[] = [];
   let error: string | undefined;
 
   try {
-    const cart_id = Cookies.get(AppConst.CART_COOKIES_ID);
+    const cookieHeader = req.headers.cookie as string;
+
+    // Define the name of the cookie you want to retrieve
+    const targetCookieName = AppConst.CART_COOKIES_ID;
+  
+    // Function to parse the cookie string and retrieve the specific cookie by name
+    const getCookieByName = (name: string, cookieString: string): string | null => {
+      const cookies = cookieString.split(';');
+      for (const cookie of cookies) {
+        const [cookieName, cookieValue] = cookie.trim().split('=');
+        if (cookieName === name) {
+          return cookieValue;
+        }
+      }
+      return null;
+    };
+
+    const targetCookieValue = getCookieByName(targetCookieName, cookieHeader);
 
     let res = await fetchProductsList({
       pageParam: 0,
-      queryParams: { cart_id },
+      queryParams: { cart_id: targetCookieValue as string },
     });
 
     products = res.response.products;
