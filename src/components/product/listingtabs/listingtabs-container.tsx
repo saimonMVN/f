@@ -54,7 +54,6 @@ const ListingTabsContainer: React.FC<Props> = ({products, isLoading, error, colS
         };
     }
 
-    console.log(products)
     return (
         <ProductsCarousel
             sectionHeading=""
