@@ -78,31 +78,31 @@ export default function Home({ products, error }: IProductPropsType) {
       <Container>
         <div className="grid grid-cols-12 gap-4 xl:gap-8">
           <div className="maincontent-left col-span-12 lg:col-span-3 2xl:col-span-2">
-            <BannerGrid data={heroSidebar} grid={1} className="relative mb-8" />
-            <BestSellerSidebarProductFeed />
-            <Latestblog className="mb-8" />
-            <NewSidebarProductFeed />
+            {/* <BannerGrid data={heroSidebar} grid={1} className="relative mb-8" /> */}
+            {/* <BestSellerSidebarProductFeed /> */}
+            {/* <Latestblog className="mb-8" /> */}
+            {/* <NewSidebarProductFeed /> */}
             <Testimonial className="mb-8" />
           </div>
           <div className="maincontent-right col-span-12  lg:col-span-9 2xl:col-span-10">
-            <ProductWithBestDeals />
+            {/* <ProductWithBestDeals /> */}
             <ListingTabsElectronicFeed colSiderbar={false} category={undefined} products={products} error={error} />
-            <BannerGridTwo
+            {/* <BannerGridTwo
               data={bannerGridHero}
               className="mb-8 lg:mb-12"
               girdClassName="xl:gap-6 "
-            />
-            <ListingTabsClothFeed />
-            <BannerGridTwo
+            /> */}
+            <ListingTabsClothFeed colSiderbar={false} category={undefined} products={products} error={error} />
+            {/* <BannerGridTwo
               data={bannerGridHero2}
               className="mb-8 lg:mb-12"
               girdClassName="xl:gap-6 xl:grid-cols-[minmax(654px,_1fr)_1fr] 2xl:grid-cols-[minmax(954px,_1fr)_1fr] "
-            />
-            <CategoryGridListBlock className="mb-6 lg:mb-8" />
-            <BannerAllCarousel
+            /> */}
+            {/* <CategoryGridListBlock className="mb-6 lg:mb-8" /> */}
+            {/* <BannerAllCarousel
               data={bannerDiscount}
               className="mb-8 lg:mb-12"
-            />
+            /> */}
           </div>
         </div>
       </Container>
