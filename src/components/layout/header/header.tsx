@@ -58,20 +58,20 @@ const Header: React.FC = () => {
     const contentWrapperCSS = dir === 'ltr' ? {left: 0} : {right: 0};
     AddActiveScroll(siteHeaderRef, 130);
     useOnClickOutside(siteSearchRef, () => closeSearch());
+      
+    const { customer } = useAccount()
+    const isAuthorized = customer ? true:false;
+
     const {
         product_categories,
         isLoading
     } = useProductCategories({include_descendants_tree:true})
 
-  const menuData = CategoriesHelper.pushCategoriesIntoMenuData(
-      // @ts-ignore
-    site_header.menu,
-    product_categories
-  );
-  const onlyCategoriesData = CategoriesHelper.getCategories(product_categories)
-      
-    const { customer } = useAccount()
-    const isAuthorized = customer ? true:false;
+    // @ts-ignore
+    const menuData = CategoriesHelper.pushCategoriesIntoMenuData(site_header.menu, product_categories)
+    const onlyCategories = CategoriesHelper.getCategories(product_categories)
+
+
 
     function handleLogin() {
         openModal('LOGIN_VIEW');
@@ -97,11 +97,12 @@ const Header: React.FC = () => {
                 )}
             >
                 <div
-                    className="bg-skin-footer  innerSticky w-screen lg:w-full transition-all duration-200 ease-in-out body-font bg-skin-fill z-50">
+                    className="innerSticky w-screen lg:w-full transition-all duration-200 ease-in-out body-font bg-skin-fill z-50">
                     <Search
                         searchId="mobile-search"
                         className="top-bar-search hidden lg:max-w-[600px] absolute z-30 px-4 md:px-6 top-12 xl:top-1"
                     />
+                    
                     {/* End of Mobile search */}
 
                     <div className="top-bar  text-13px text-gray-300 border-b border-white/5">
@@ -197,13 +198,13 @@ const Header: React.FC = () => {
                                     {t('text-all-categories')}
                                 </button>
                                 {categoryMenu && (
-                                    <CategoryDropdownMenu className=""/>
+                                    <CategoryDropdownMenu loading={isLoading} categories={onlyCategories} className=""/>
                                 )}
 
                             </div>
 
                             <HeaderMenu
-                                data={site_header.menu}
+                                data={menuData}
                                 className="flex transition-all duration-200 ease-in-out"
                             />
                             {/* End of main menu */}

@@ -11,7 +11,7 @@ export default async function medusaRequest(
     body?: Record<string, any>
   }
 ) {
-  const options: RequestInit = {
+  const options: RequestInit & { next: { revalidate: number } } = {
     method,
     headers: {
       "Content-Type": "application/json",
