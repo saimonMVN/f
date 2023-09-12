@@ -43,7 +43,7 @@ export type Category = {
   details?: string;
   image?: Attachment;
   icon?: string;
-  children?: [Category];
+  children?: Category[];
   products?: Product[];
   productCount?: number;
   [key: string]: unknown;
@@ -164,7 +164,7 @@ export type Blog = {
   content?: string;
   contentTwo?: string;
   contentThree?: string;
-  quote:{
+  quote: {
     content: string;
   };
   postList?: object;
