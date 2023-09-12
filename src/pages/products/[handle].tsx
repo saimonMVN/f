@@ -9,6 +9,8 @@ import {ProductProvider} from "../../lib/context/product-context";
 import {PricedProduct} from "@medusajs/medusa/dist/types/pricing";
 import medusaRequest from "../../lib/medusa-fetch";
 import {AppConst} from "@utils/app-const";
+import Cookies from "js-cookie";
+import {getCookieByCookiesKey} from "@utils/global";
 
 interface IProductDetailsPropsType {
     product: PricedProduct;
@@ -48,19 +50,14 @@ export const getServerSideProps: GetServerSideProps<
         if (!handle) {
             return {notFound: true};
         }
-        const cookies = req.headers.cookie
-
-        // const cart_id = cookies?.get(AppConst.CART_COOKIES_ID);
-         console.log(req.headers.cookie)
-
+        const cookies = req.headers.cookie || ""
+        const cart_id = getCookieByCookiesKey(AppConst.CART_COOKIES_ID, cookies);
         const res = await medusaRequest('GET', '/products', {
             query: {
                 handle,
-                // cart_id,
+                cart_id,
             },
         });
-
-        console.log({res})
 
         if (
             !res.ok ||

@@ -18,16 +18,16 @@ const TagLabel: React.FC<Props> = ({ className, data }) => {
     router.push(ROUTES.SEARCH);
   }
   return (
-    <div
-      className={cn(
-        ' text-13px md:text-sm rounded hover:bg-skin-button-secondary block border border-sink-base px-2 py-1 transition',
-        className
-      )}
-      role="button"
-      onClick={changeTags}
-    >
-      {name}
-    </div>
+      <div
+          className={cn(
+              ' text-13px md:text-sm rounded hover:bg-skin-button-secondary block border border-sink-base px-2 py-1 transition',
+              className
+          )}
+          role="button"
+          onClick={changeTags}
+      >
+        {name}
+      </div>
   );
 };
 
