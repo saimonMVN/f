@@ -1,35 +1,22 @@
-import {useMemo, useState} from 'react';
+import { useMemo, useState } from 'react';
 import Button from '@components/ui/button';
 import Counter from '@components/ui/counter';
 import { useRouter } from 'next/router';
 import { ROUTES } from '@utils/routes';
-import useWindowSize from '@utils/use-window-size';
-import { useProductQuery } from '@framework/product/get-product';
-import { getVariations } from '@framework/utils/get-variations';
-import usePrice from '@framework/product/use-price';
-import { useCart } from '@contexts/cart/cart.context';
-import { generateCartItem } from '@utils/generate-cart-item';
-import ProductAttributes from '@components/product/product-attributes';
-import isEmpty from 'lodash/isEmpty';
-import { toast } from 'react-toastify';
 import ThumbnailCarousel from '@components/ui/carousel/thumbnail-carousel';
 import { useTranslation } from 'next-i18next';
 import Image from '@components/ui/image';
 import CartIcon from '@components/icons/cart-icon';
-import { IoIosHeart, IoIosHeartEmpty } from 'react-icons/io';
 import TagLabel from '@components/ui/tag-label';
 import LabelIcon from '@components/icons/label-icon';
 import { IoArrowRedoOutline } from 'react-icons/io5';
 import SocialShareBox from '@components/ui/social-share-box';
 import ProductDetailsTab from '@components/product/product-details/product-tab';
 import VariationPrice from './variation-price';
-import isEqual from 'lodash/isEqual';
-import {getDirection} from "@utils/get-direction";
-import ImageLightBox from "@components/ui/image-lightbox";
-import {PricedProduct} from "@medusajs/medusa/dist/types/pricing";
-import OptionSelect from "@components/common/option-select";
-import {useProductActions} from "../../lib/context/product-context";
-import useProductPrice from "../../lib/hooks/use-product-price";
+import { useProductActions } from '@lib/context/product-context';
+import useProductPrice from '@lib/hooks/use-product-price';
+import OptionSelect from '@components/common/option-select';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
 interface ProductSingleDetailsProps {
   product: PricedProduct;
@@ -262,4 +249,3 @@ const ProductSingleDetails: React.FC<ProductSingleDetailsProps> = ({
 };
 
 export default ProductSingleDetails;
-

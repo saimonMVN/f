@@ -8,6 +8,7 @@ import Divider from '@components/ui/divider';
 import {ProductProvider} from "../../lib/context/product-context";
 import {PricedProduct} from "@medusajs/medusa/dist/types/pricing";
 import medusaRequest from "../../lib/medusa-fetch";
+import {AppConst} from "@utils/app-const";
 
 interface IProductDetailsPropsType {
     product: PricedProduct;
@@ -47,14 +48,15 @@ export const getServerSideProps: GetServerSideProps<
         if (!handle) {
             return {notFound: true};
         }
-        const cookies = parseCookie(req.headers.cookie || '');
-        const cart_id = cookies.get(AppConst.CART_COOKIES_ID);
+        const cookies = req.headers.cookie
 
+        // const cart_id = cookies?.get(AppConst.CART_COOKIES_ID);
+         console.log(req.headers.cookie)
 
         const res = await medusaRequest('GET', '/products', {
             query: {
                 handle,
-                cart_id,
+                // cart_id,
             },
         });
 

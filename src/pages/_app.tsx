@@ -11,6 +11,7 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { appWithTranslation } from 'next-i18next';
 import { DefaultSeo } from '@components/seo/default-seo';
 
+
 // external
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -21,6 +22,10 @@ import '@styles/custom-plugins.css';
 import '@styles/tailwind.css';
 import '@styles/themes.scss';
 import { getDirection } from '@utils/get-direction';
+import {CartProvider, MedusaProvider} from "medusa-react";
+import {MEDUSA_BACKEND_URL,queryClient} from "@lib/config";
+import {CartDropdownProvider} from "@lib/context/cart-dropdown-context";
+import {StoreProvider} from "@lib/context/store-context";
 
 const Noop: React.FC = ({ children }) => <>{children}</>;
 
@@ -37,22 +42,36 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
   const Layout = (Component as any).Layout || Noop;
 
   return (
-    <QueryClientProvider client={queryClientRef.current}>
-      <Hydrate state={pageProps.dehydratedState}>
-        <ManagedUIContext>
-          <>
-            <DefaultSeo />
-            <Layout pageProps={pageProps}>
-              <Component {...pageProps} key={router.route} />
-            </Layout>
-            <ToastContainer />
-            <ManagedModal />
-            <ManagedDrawer />
-          </>
-        </ManagedUIContext>
-      </Hydrate>
-      {/* <ReactQueryDevtools /> */}
-    </QueryClientProvider>
+      <QueryClientProvider client={queryClientRef.current}>
+        <MedusaProvider
+            baseUrl={MEDUSA_BACKEND_URL}
+            queryClientProviderProps={{
+              client: queryClient,
+            }}
+        >
+          <Hydrate state={pageProps.dehydratedState}>
+            <CartDropdownProvider>
+              <CartProvider>
+                <StoreProvider>
+                  <ManagedUIContext>
+                    <>
+                      <DefaultSeo />
+                      <Layout pageProps={pageProps}>
+                        <Component {...pageProps} key={router.route} />
+                      </Layout>
+                      <ToastContainer />
+                      <ManagedModal />
+                      <ManagedDrawer />
+                    </>
+                  </ManagedUIContext>
+                </StoreProvider>
+              </CartProvider>
+            </CartDropdownProvider>
+
+          </Hydrate>
+          {/* <ReactQueryDevtools /> */}
+        </MedusaProvider>
+      </QueryClientProvider>
   );
 };
 

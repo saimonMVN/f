@@ -64,7 +64,7 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
               className={clsx(
                 'border-gray-200 border-[2px] text-xsmall-regular h-auto min-h-[40px] min-w-[40px] transition-all duration-200 flex items-center justify-center',
                 {
-                  'border-skin-primary  box-content	': v === current,
+                  '!border-skin-primary  box-content	': v === current,
                 }
               )}
             >
