@@ -1,13 +1,14 @@
 import {ROUTES} from '@utils/routes';
 import ProductsCarousel from '@components/product/products-carousel';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
 interface Props {
-    data: any;
+    products: PricedProduct[];
     isLoading: any;
     error?: any;
     colSiderbar?: boolean;
 }
-const ListingTabsContainer: React.FC<Props> = ({data, isLoading, error, colSiderbar= true}) => {
+const ListingTabsContainer: React.FC<Props> = ({products, isLoading, error, colSiderbar= true}) => {
     let breakpoints = {};
     if(colSiderbar){
          breakpoints = {
@@ -57,7 +58,7 @@ const ListingTabsContainer: React.FC<Props> = ({data, isLoading, error, colSider
         <ProductsCarousel
             sectionHeading=""
             categorySlug={ROUTES.PRODUCTS}
-            products={data}
+            products={products}
             loading={isLoading}
             error={error?.message}
             uniqueKey="electronic"
