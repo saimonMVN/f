@@ -8,12 +8,26 @@ import {useState} from "react";
 import {useRouter} from "next/router";
 import {getDirection} from "@utils/get-direction";
 import SubMegaVertical from "@components/ui/mega/sub-mega-vertical";
+import {Category} from "@framework/types";
 
-function SidebarMenuItem({className, item, depth = 0}: any) {
+
+interface ICategoryMenuProps {
+    categoriesLimit?: number;
+    items:Category[];
+    className?:string;
+}
+interface ISideBarMenuProps {
+    depth?: number;
+    item:Category;
+    className?:string;
+
+}
+
+function SidebarMenuItem({className, item, depth = 0}: ISideBarMenuProps) {
     const {t} = useTranslation('common');
     const {locale} = useRouter();
     const dir = getDirection(locale);
-    const {name, children: items, icon, type} = item;
+    const {name,slug, children: items, icon, type,id} = item;
 
     return (
         <>
@@ -25,7 +39,10 @@ function SidebarMenuItem({className, item, depth = 0}: any) {
                 }`}
             >
                 <Link
-                    href={ROUTES.SEARCH}
+                    href={{
+                        pathname: ROUTES.SEARCH,
+                        query: { category: id },
+                    }}
                     className={cn(
                         'flex items-center w-full py-3 text-start outline-none focus:outline-none focus:ring-0 focus:text-skin-base'
                     )}
@@ -40,17 +57,17 @@ function SidebarMenuItem({className, item, depth = 0}: any) {
                             />
                         </div>
                     )}
-                    <span className="capitalize ">
+                    <span className="capitalize">
                         {name}
                     </span>
-                    {items && (
+                    {items && items.length > 0 && (
                         <span className="ms-auto hidden md:inline-flex">
                             {dir === 'rtl' ? <IoIosArrowBack className="text-15px text-skin-base text-opacity-40"/>
                                 : <IoIosArrowForward className="text-15px text-skin-base text-opacity-40"/>}
                          </span>
                     )}
                 </Link>
-                {Array.isArray(items) && (
+                {Array.isArray(items) && items.length > 0 &&  (
                     <>
                         {type != 'mega' ? (
                             <div
@@ -82,7 +99,7 @@ function SidebarMenuItem({className, item, depth = 0}: any) {
     );
 }
 
-function CategoryMenu({items, categoriesLimit, className}: any) {
+function CategoryMenu({items, categoriesLimit = 6, className}: ICategoryMenuProps) {
     const [categoryMenuToggle, setcategoryMenuToggle] = useState(Boolean(false));
     const {t} = useTranslation('common');
     const {locale} = useRouter();
@@ -100,7 +117,7 @@ function CategoryMenu({items, categoriesLimit, className}: any) {
             )}
         >
 
-            {items?.map((item: any, idx: number) => (
+            {items && items.map((item, idx: number) => (
                 idx <= categoriesLimit - 1 ? (
                     <SidebarMenuItem key={`${item.slug}-key-${item.id}`} item={item}/>
                 ) : (
@@ -108,7 +125,7 @@ function CategoryMenu({items, categoriesLimit, className}: any) {
                 )
             ))}
 
-            {items.length >= categoriesLimit && (
+            {items && Array.isArray(items) &&   items.length >= categoriesLimit && (
                 <li className={`px-4 relative transition text-sm hover:text-skin-primary`}>
                     <div
                         className={`flex items-center w-full py-3 text-start cursor-pointer`}

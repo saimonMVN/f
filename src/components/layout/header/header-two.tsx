@@ -23,6 +23,8 @@ import MobileAllCategories from "@components/layout/header/mobile-all-categories
 import {Drawer} from "@components/common/drawer/drawer";
 import {useRouter} from "next/router";
 import {getDirection} from "@utils/get-direction";
+import {useProductCategories} from "medusa-react";
+import CategoriesHelper from "@utils/SDK/CategoriesHelper";
 
 const AuthMenu = dynamic(() => import('./auth-menu'), {ssr: false});
 const CartButton = dynamic(() => import('@components/cart/cart-button'), {
@@ -51,8 +53,16 @@ const Header: React.FC = () => {
     const {locale} = useRouter();
     const dir = getDirection(locale);
     const contentWrapperCSS = dir === 'ltr' ? {left: 0} : {right: 0};
-
     const [categoryMenu, setCategoryMenu] = useState(Boolean(true));
+
+    const {
+        product_categories,
+        isLoading
+    } = useProductCategories({include_descendants_tree:true})
+
+    // @ts-ignore
+    const menuData = CategoriesHelper.pushCategoriesIntoMenuData(site_header.menu, product_categories)
+    const onlyCategories = CategoriesHelper.getCategories(product_categories)
 
     //window resize event listener CategoryMenu
     useEffect(() => {
@@ -188,11 +198,11 @@ const Header: React.FC = () => {
                                     <FiMenu className="text-2xl me-3"/>
                                     {t('text-all-categories')}
                                 </button>
-                                {(categoryMenu) && <CategoryDropdownMenu/>}
+                                {(categoryMenu) && <CategoryDropdownMenu loading={isLoading} categories={onlyCategories}/>}
                             </div>
 
                             <HeaderMenu
-                                data={site_header.menu}
+                                data={menuData}
                                 className="flex transition-all duration-200 ease-in-out"
                             />
                             {/* End of main menu */}

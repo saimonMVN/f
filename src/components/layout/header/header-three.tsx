@@ -24,6 +24,8 @@ import {getDirection} from '@utils/get-direction';
 import {useRouter} from "next/router";
 import CategoryDropdownSidebar from "@components/category/category-dropdown-sidebar";
 import MobileAllCategories from "@components/layout/header/mobile-all-categories";
+import {useProductCategories} from "medusa-react";
+import CategoriesHelper from "@utils/SDK/CategoriesHelper";
 
 const AuthMenu = dynamic(() => import('./auth-menu'), {ssr: false});
 const CartButton = dynamic(() => import('@components/cart/cart-button'), {
@@ -57,6 +59,16 @@ const Header: React.FC = () => {
     const contentWrapperCSS = dir === 'ltr' ? {left: 0} : {right: 0};
     AddActiveScroll(siteHeaderRef, 130);
     useOnClickOutside(siteSearchRef, () => closeSearch());
+
+    const {
+        product_categories,
+        isLoading
+    } = useProductCategories({include_descendants_tree:true})
+
+    // @ts-ignore
+    const menuData = CategoriesHelper.pushCategoriesIntoMenuData(site_header.menu, product_categories)
+
+    const onlyCategories = CategoriesHelper.getCategories(product_categories)
 
     function handleLogin() {
         openModal('LOGIN_VIEW');
@@ -181,13 +193,13 @@ const Header: React.FC = () => {
                                         {t('text-all-categories')}
                                     </button>
                                     {categoryMenu && (
-                                        <CategoryDropdownMenu className=""/>
+                                        <CategoryDropdownMenu loading={isLoading} categories={onlyCategories} className=""/>
                                     )}
 
                                 </div>
 
                                 <HeaderMenu
-                                    data={site_header.menu}
+                                    data={menuData}
                                     className="flex transition-all duration-200 ease-in-out"
                                 />
                                 {/* End of main menu */}
