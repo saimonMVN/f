@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Image from '@components/ui/image';
 import { useTranslation } from 'next-i18next';
 import { FaCheck } from 'react-icons/fa';
+import {Category} from "@framework/types";
 
 function checkIsActive(arr: any, item: string) {
   if (arr.includes(item)) {
@@ -13,11 +14,19 @@ function checkIsActive(arr: any, item: string) {
   }
   return false;
 }
+
+
+interface ICategoryFilterMenuItemProps{
+
+  item:Category;
+  depth?:number;
+  className?:string;
+}
 function CategoryFilterMenuItem({
   className = 'text-skin-base hover:text-skin-primary  py-3 xl:py-3',
   item,
   depth = 0,
-}: any) {
+}: ICategoryFilterMenuItemProps) {
   const { t } = useTranslation('common');
   const router = useRouter();
   const { pathname, query } = router;
@@ -30,10 +39,10 @@ function CategoryFilterMenuItem({
     item?.children?.some((_item: any) =>
       checkIsActive(selectedCategories, _item.slug)
     );
-  const [isOpen, setOpen] = useState<boolean>(isActive);
+  const [isOpen, setOpen] = useState<boolean>(!!isActive);
   const [subItemAction, setSubItemAction] = useState<boolean>(false);
   useEffect(() => {
-    setOpen(isActive);
+    setOpen(!!isActive);
   }, [isActive]);
   const { slug, name, children: items, icon } = item;
   const { displaySidebar, closeSidebar } = useUI();
@@ -143,10 +152,17 @@ function CategoryFilterMenuItem({
   );
 }
 
-function CategoryFilterMenu({ items, className }: any) {
+
+interface ICategoryFilterMenuProps{
+  items:Category[];
+  className?:string;
+
+}
+
+function CategoryFilterMenu({ items, className }: ICategoryFilterMenuProps) {
   return (
     <ul className={cn(className)}>
-      {items?.map((item: any) => (
+      {items?.map((item) => (
         <CategoryFilterMenuItem
           key={`${item.slug}-key-${item.id}`}
           item={item}
