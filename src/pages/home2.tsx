@@ -36,6 +36,8 @@ import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import Cookies from 'js-cookie';
 import { AppConst } from '@utils/app-const';
 import { fetchProductsList } from 'src/lib/data';
+import { getCookieByCookiesKey } from '@utils/global';
+import medusaRequest from '@lib/medusa-fetch';
 
 interface IProductPropsType {
   products: PricedProduct[];
@@ -111,53 +113,37 @@ export default function Home({ products, error }: IProductPropsType) {
 Home.Layout = Layout;
 
 export const getServerSideProps: GetServerSideProps<
-  IProductPropsType
-> = async ({ locale, req }) => {
-  let products: PricedProduct[] = [];
-  let error: string | undefined;
+    IProductPropsType
+> = async ({locale, req}) => {
+    try {
+        const cookies = req.headers.cookie || ""
+        const cart_id = getCookieByCookiesKey(AppConst.CART_COOKIES_ID, cookies);
+        const res = await medusaRequest('GET', '/products', {
+            query: {
+                cart_id,
+            },
+        });
 
-  try {
-    const cookieHeader = req.headers.cookie as string;
-
-    // Define the name of the cookie you want to retrieve
-    const targetCookieName = AppConst.CART_COOKIES_ID;
-  
-    // Function to parse the cookie string and retrieve the specific cookie by name
-    const getCookieByName = (name: string, cookieString: string): string | null => {
-      const cookies = cookieString.split(';');
-      for (const cookie of cookies) {
-        const [cookieName, cookieValue] = cookie.trim().split('=');
-        if (cookieName === name) {
-          return cookieValue;
+        if (
+            !res.ok
+        ) {
+            return {notFound: true};
         }
-      }
-      return null;
-    };
-
-    const targetCookieValue = getCookieByName(targetCookieName, cookieHeader);
-
-    let res = await fetchProductsList({
-      pageParam: 0,
-      queryParams: { cart_id: targetCookieValue as string },
-    });
-
-    products = res.response.products;
-  } catch (err) {
-    const errorMessage: any = err;
-    error = errorMessage.message;
-  }
-
-  return {
-    props: {
-      products: products,
-      error: error ? error : null,
-
-      ...(await serverSideTranslations(locale!, [
-        'common',
-        'forms',
-        'menu',
-        'footer',
-      ])),
-    },
-  };
+        return {
+            props: {
+                products: res.body.products,
+                error: null,
+                ...(await serverSideTranslations(locale!, [
+                    'common',
+                    'forms',
+                    'menu',
+                    'footer',
+                ])),
+            },
+        };
+    } catch (err) {
+        return {
+            notFound: true,
+        };
+    }
 };
