@@ -3,9 +3,20 @@ import SignupForm from '@components/auth/sign-up-form';
 import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Seo from '@components/seo/seo';
-import Divider from '@components/ui/divider';
+import { useAccount } from '@lib/context/account-context';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 export default function SignInPage() {
+  const { retrievingCustomer, customer } = useAccount()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!retrievingCustomer && customer) {
+      router.back()
+    }
+  }, [customer, retrievingCustomer, router])
+
   return (
     <>
       <Seo

@@ -2,10 +2,20 @@ import Layout from '@components/layout/layout';
 import LoginForm from '@components/auth/login-form';
 import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import Divider from '@components/ui/divider';
 import Seo from '@components/seo/seo';
+import { useAccount } from '@lib/context/account-context';
+import { useRouter } from 'next/router';
+import {useEffect} from "react"
 
 export default function SignInPage() {
+  const { retrievingCustomer, customer } = useAccount()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!retrievingCustomer && customer) {
+      router.back()
+    }
+  }, [customer, retrievingCustomer, router])
   return (
     <>
       <Seo

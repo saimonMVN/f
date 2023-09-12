@@ -26,6 +26,7 @@ import {CartProvider, MedusaProvider} from "medusa-react";
 import {MEDUSA_BACKEND_URL,queryClient} from "@lib/config";
 import {CartDropdownProvider} from "@lib/context/cart-dropdown-context";
 import {StoreProvider} from "@lib/context/store-context";
+import { AccountProvider } from '@lib/context/account-context';
 
 const Noop: React.FC = ({ children }) => <>{children}</>;
 
@@ -53,6 +54,7 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
             <CartDropdownProvider>
               <CartProvider>
                 <StoreProvider>
+                <AccountProvider>
                   <ManagedUIContext>
                     <>
                       <DefaultSeo />
@@ -64,6 +66,7 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
                       <ManagedDrawer />
                     </>
                   </ManagedUIContext>
+                  </AccountProvider>
                 </StoreProvider>
               </CartProvider>
             </CartDropdownProvider>
