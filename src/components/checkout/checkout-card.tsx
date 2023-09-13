@@ -65,7 +65,7 @@ const CheckoutCard: React.FC<CheckoutCardProps> = ({ cart }) => {
          {!!cart.discount_total && (
          <CheckoutCardFooterItem item={
             {
-              id: "1",
+              id: "2",
               name: t('text-discount'),
               price: formatAmount({
                 amount: cart.discount_total || 0,
@@ -79,7 +79,7 @@ const CheckoutCard: React.FC<CheckoutCardProps> = ({ cart }) => {
          {!!cart.gift_card_total && (
          <CheckoutCardFooterItem item={
             {
-              id: "1",
+              id: "3",
               name: t('text-gift-card'),
               price: formatAmount({
                 amount: cart.gift_card_total || 0,
@@ -92,7 +92,7 @@ const CheckoutCard: React.FC<CheckoutCardProps> = ({ cart }) => {
 
          <CheckoutCardFooterItem item={
             {
-              id: "1",
+              id: "4",
               name: t('text-shipping'),
               price: formatAmount({
                 amount: cart.shipping_total || 0,
@@ -104,7 +104,7 @@ const CheckoutCard: React.FC<CheckoutCardProps> = ({ cart }) => {
 
          <CheckoutCardFooterItem item={
             {
-              id: "1",
+              id: "5",
               name: t('text-tax'),
               price: formatAmount({
                 amount: cart.tax_total || 0,
@@ -116,7 +116,7 @@ const CheckoutCard: React.FC<CheckoutCardProps> = ({ cart }) => {
 
           <CheckoutCardFooterItem item={
             {
-              id: "1",
+              id: "6",
               name: t('text-total'),
               price: formatAmount({
                   amount: cart.total || 0,
@@ -134,27 +134,18 @@ const CheckoutCard: React.FC<CheckoutCardProps> = ({ cart }) => {
 
 
        <PaymentButton paymentSession={cart?.payment_session} />
-        {/* <Button
-          variant="formButton"
-          className={`w-full mt-8 mb-5 bg-skin-primary text-skin-inverted rounded font-semibold px-4 py-3 transition-all ${
-            isEmpty && 'opacity-40 cursor-not-allowed'
-          }`}
-          onClick={orderHeader}
-        >
-          {t('button-order-now')}
-        </Button> */}
       </div>
-      {/* <Text className="mt-8">
+      <Text className="mt-8">
         {t('text-by-placing-your-order')}{' '}
         <Link href={ROUTES.TERMS} className="text-skin-primary underline font-medium">
-            {t('text-terms-of-service')}{' '}
+            {t('text-terms-of-service')}
         </Link>
-        {t('text-and')}{' '}
+        {' '}{t('text-and')}{' '}
         <Link href={ROUTES.PRIVACY} className="text-skin-primary underline font-medium">
             {t('text-privacy')}
         </Link>
         . {t('text-credit-debit')}
-      </Text> */}
+      </Text>
       <Text className="mt-4">{t('text-bag-fee')}</Text>
     </>
   );
