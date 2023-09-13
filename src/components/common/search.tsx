@@ -35,9 +35,9 @@ const Search = React.forwardRef<HTMLDivElement, Props>(
     const [searchText, setSearchText] = useState('');
     const [inputFocus, setInputFocus] = useState<boolean>(false);
     const [onEnterSearch, setOnEnterSearch] = useState<boolean>(false)
-    const {isLoading, products} = useProducts({q:searchText})
-
     const { cart } = useCart()
+    const {isLoading, products} = useProducts({q:searchText, cart_id: cart?.id})
+
     const previews = usePreviews({products: products, region: cart?.region })
 
     useFreezeBodyScroll(
