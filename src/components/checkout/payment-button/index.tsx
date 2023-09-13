@@ -55,7 +55,7 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({ paymentSession }) => {
       return <Button
       variant="formButton"
       className={`w-full bg-skin-primary text-skin-inverted rounded font-semibold px-4 py-3 transition-all opacity-40 cursor-not-allowed'
-      }`} disabled>{cart?.items.length===0? "Your cart is empty" : "Select a payment method"}</Button>
+      }`} disabled>Select a payment method</Button>
   }
 }
 
@@ -156,7 +156,7 @@ const StripePaymentButton = ({
         disabled={submitting || disabled || notReady}
         onClick={handlePayment}
       >
-        {cart?.items.length===0? "Your cart is empty" : submitting ? <FaSpinner /> : "Order Now"}
+        {submitting ? <FaSpinner /> : "Order Now"}
       </Button>
       {errorMessage && (
         <div className="text-red-500 text-small-regular mt-2">
