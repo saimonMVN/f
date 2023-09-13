@@ -11,9 +11,10 @@ import { AddToCart } from '@components/product/add-to-cart';
 import { useTranslation } from 'next-i18next';
 import { productPlaceholder } from '@assets/placeholders';
 import {ROUTES} from "@utils/routes";
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
 interface ProductProps {
-  product: Product;
+  product: PricedProduct;
   className?: string;
 }
 function RenderPopupOrAddToCart({ data }: { data: Product }) {

@@ -113,7 +113,7 @@ const ProductsCarousel: React.FC<ProductsCarouselProps> = ({
               ))
             ) : (
               <>
-                {previews?.slice(0, limit).map((product, idx) => (
+                {products && previews?.slice(0, limit).map((product, idx) => (
                   <SwiperSlide
                     key={`${uniqueKey}-${idx}`}
                     className=""

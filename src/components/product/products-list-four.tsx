@@ -9,11 +9,12 @@ import SeeAll from "@components/ui/see-all";
 import {getDirection} from "@utils/get-direction";
 import useWindowSize from "@utils/use-window-size";
 import {useRouter} from "next/router";
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
 interface ProductsProps {
     sectionHeading: string;
     className?: string;
-    products?: Product[];
+    products?: PricedProduct[];
     loading: boolean;
     error?: string;
     limit?: number;

@@ -10,12 +10,17 @@ import ProductCardLoader from '@components/ui/loaders/product-card-loader';
 import cn from 'classnames';
 import { useRouter } from 'next/router';
 import { getDirection } from '@utils/get-direction';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import { AppConst } from '@utils/app-const';
+import { useCart } from 'medusa-react';
+import usePreviews from '@lib/hooks/use-previews';
+import { ProductProvider } from '@lib/context/product-context';
 
 interface ProductsCarouselProps {
   sectionHeading: string;
   categorySlug?: string;
   className?: string;
-  products?: Product[];
+  products?: PricedProduct[];
   loading: boolean;
   error?: string;
   limit?: number;
@@ -53,7 +58,7 @@ const ProductsCarousel: React.FC<ProductsCarouselProps> = ({
   products,
   loading,
   error,
-  limit,
+  limit = AppConst.PRODUCT_LIMIT,
   uniqueKey,
   borderCarousel,
    carouselBreakpoint,
@@ -63,6 +68,10 @@ const ProductsCarousel: React.FC<ProductsCarouselProps> = ({
   const { locale } = useRouter();
   const dir = getDirection(locale);
   if(width!  < 767 ) limit = 4;
+
+  const { cart } = useCart()
+
+  const previews = usePreviews({ products, region: cart?.region })
 
   return (
     <div
@@ -102,12 +111,12 @@ const ProductsCarousel: React.FC<ProductsCarouselProps> = ({
               ))
             ) : (
               <>
-                {products.slice(0, limit)?.map((product: any, idx) => (
-                  <SwiperSlide
+                {products && previews?.slice(0, limit).map((product, idx) => (
+                <SwiperSlide
                     key={`${uniqueKey}-${idx}`}
                     className="px-1.5 md:px-2 xl:px-2.5"
                   >
-                    <ProductCard product={product} />
+                     <ProductProvider product={products[idx]}><ProductCard pricedProduct={products[idx]} previewProduct={product} /></ProductProvider>
                   </SwiperSlide>
                 ))}
 
