@@ -5,12 +5,12 @@ import Breadcrumb from '@components/ui/breadcrumb';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {GetServerSideProps} from 'next';
 import Divider from '@components/ui/divider';
-import {ProductProvider} from "../../lib/context/product-context";
+import {ProductProvider} from "@lib/context/product-context";
 import {PricedProduct} from "@medusajs/medusa/dist/types/pricing";
 import medusaRequest from "../../lib/medusa-fetch";
 import {AppConst} from "@utils/app-const";
-import Cookies from "js-cookie";
 import {getCookieByCookiesKey} from "@utils/global";
+import React from "react";
 
 interface IProductDetailsPropsType {
     product: PricedProduct;

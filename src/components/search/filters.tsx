@@ -1,11 +1,12 @@
 import { CategoryFilter } from './category-filter';
-import { BrandFilter } from './brand-filter';
+import { TypeFilter} from './type-filter';
 import { FilteredItem } from './filtered-item';
 import { useRouter } from 'next/router';
 import isEmpty from 'lodash/isEmpty';
 import { useTranslation } from 'next-i18next';
 import { DietaryFilter } from '@components/search/dietary-filter';
 import Heading from '@components/ui/heading';
+import {CollectionFilter} from "@components/search/collection-filter";
 
 export const ShopFilters: React.FC = () => {
   const router = useRouter();
@@ -27,29 +28,29 @@ export const ShopFilters: React.FC = () => {
               {t('text-clear-all')}
             </button>
           </div>
-          <div className="flex flex-wrap -m-1">
-            {Object.values(query)
-              .join(',')
-              .split(',')
-              .map(
-                (v, idx) =>
-                  !isEmpty(v) && (
-                    <FilteredItem
-                      itemKey={
-                        Object.keys(query).find((k) => query[k]?.includes(v))!
-                      }
-                      itemValue={v}
-                      key={idx}
-                    />
-                  )
-              )}
-          </div>
+          {/*<div className="flex flex-wrap -m-1">*/}
+          {/*  {Object.values(query)*/}
+          {/*    .join(',')*/}
+          {/*    .split(',')*/}
+          {/*    .map(*/}
+          {/*      (v, idx) =>*/}
+          {/*        !isEmpty(v) && (*/}
+          {/*          <FilteredItem*/}
+          {/*            itemKey={*/}
+          {/*              Object.keys(query).find((k) => query[k]?.includes(v))!*/}
+          {/*            }*/}
+          {/*            itemValue={v}*/}
+          {/*            key={idx}*/}
+          {/*          />*/}
+          {/*        )*/}
+          {/*    )}*/}
+          {/*</div>*/}
         </div>
       )}
 
       <CategoryFilter />
-      <DietaryFilter />
-      <BrandFilter />
+      <CollectionFilter />
+      <TypeFilter />
     </div>
   );
 };

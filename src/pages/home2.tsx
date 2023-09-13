@@ -1,6 +1,5 @@
 import Testimonial from '@components/common/testimonial';
 import Seo from '@components/seo/seo';
-import FeatureGrid from '@components/common/featured-grid';
 import FeatureCarousel from '@components/common/featured-carousel';
 import Layout from '@components/layout/layout-two';
 import Container from '@components/ui/container';
