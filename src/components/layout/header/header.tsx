@@ -71,8 +71,6 @@ const Header: React.FC = () => {
     const menuData = CategoriesHelper.pushCategoriesIntoMenuData(site_header.menu, product_categories)
     const onlyCategories = CategoriesHelper.getCategories(product_categories)
 
-
-
     function handleLogin() {
         openModal('LOGIN_VIEW');
     }
@@ -84,7 +82,6 @@ const Header: React.FC = () => {
   function handleMobileAllCategories() {
     return openMobileAllCategories();
   }
-
 
     return (
         <>
