@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import cn from 'classnames';
-import { useSearchQuery } from '@framework/product/use-search';
 import SearchBox from '@components/common/search-box';
 import SearchProduct from '@components/common/search-product';
 import SearchResultLoader from '@components/ui/loaders/search-result-loader';
 import useFreezeBodyScroll from '@utils/use-freeze-body-scroll';
 import Scrollbar from '@components/ui/scrollbar';
 import { useUI } from '@contexts/ui.context';
-import {useProducts} from "medusa-react";
+import {useCart, useProducts} from "medusa-react";
 import {useRouter} from "next/router";
+import usePreviews from "@lib/hooks/use-previews";
 
 type Props = {
   className?: string;
@@ -34,10 +34,12 @@ const Search = React.forwardRef<HTMLDivElement, Props>(
     const router = useRouter();
     const [searchText, setSearchText] = useState('');
     const [inputFocus, setInputFocus] = useState<boolean>(false);
-
     const [onEnterSearch, setOnEnterSearch] = useState<boolean>(false)
-
     const {isLoading, products} = useProducts({q:searchText})
+
+    const { cart } = useCart()
+    const previews = usePreviews({products: products, region: cart?.region })
+
     useFreezeBodyScroll(
         inputFocus || displaySearch || displayMobileSearch
     );
@@ -78,7 +80,7 @@ const Search = React.forwardRef<HTMLDivElement, Props>(
         <div
           className={cn('overlay cursor-pointer', {
             open: displayMobileSearch,
-            'input-focus-overlay-open': inputFocus === true,
+            'input-focus-overlay-open': inputFocus,
             'open-search-overlay': displaySearch,
           })}
           onClick={() => clear()}
@@ -100,7 +102,7 @@ const Search = React.forwardRef<HTMLDivElement, Props>(
           </div>
           {/* End of searchbox */}
 
-          {searchText && (
+          {searchText && !onEnterSearch && (
             <div className="w-full absolute top-[56px] start-0 py-2.5 bg-skin-fill rounded-md flex flex-col overflow-hidden shadow-dropDown z-30">
               <Scrollbar className="os-host-flexbox">
                 <div className="w-full h-[380px]">
@@ -116,13 +118,13 @@ const Search = React.forwardRef<HTMLDivElement, Props>(
                             />
                           </div>
                       ))
-                      : products?.map((item, index:number) => (
+                      :products &&  previews.map((item, index:number) => (
                           <div
                               key={`search-result-key-${index}`}
                               className="py-2.5 ps-5 pe-10 border-b border-black/5 scroll-snap-align-start transition-colors duration-200 hover:bg-gray-50"
                               onClick={clear}
                           >
-                            <SearchProduct product={item} key={index} />
+                            <SearchProduct previewProduct={item} product={products[index]} key={index} />
                           </div>
                       ))}
                 </div>

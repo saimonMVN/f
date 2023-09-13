@@ -89,12 +89,12 @@ const Header: React.FC = () => {
                 id="siteHeader"
                 ref={siteHeaderRef}
                 className={cn(
-                    'header-five sticky-header sticky top-0 z-50 lg:relative w-full',
+                    'header-five sticky-header sticky top-0 z-50 lg:relative w-full ',
                     displayMobileSearch && 'active-mobile-search'
                 )}
             >
                 <div
-                    className="innerSticky w-screen lg:w-full transition-all duration-200 ease-in-out body-font bg-skin-fill z-50">
+                    className="innerSticky w-screen lg:w-full transition-all duration-200 ease-in-out body-font bg-skin-footer z-50">
                     <Search
                         searchId="mobile-search"
                         className="top-bar-search hidden lg:max-w-[600px] absolute z-30 px-4 md:px-6 top-12 xl:top-1"
