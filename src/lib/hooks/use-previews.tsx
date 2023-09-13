@@ -13,12 +13,11 @@ const usePreviews = <T extends InfiniteProductPage>({
   products,
   region,
 }: UsePreviewProps<T>) => {
+
   const previews: ProductPreviewType[] = useMemo(() => {
     if (!products || !region) {
       return []
     }
-
-    
 
     const transformedProducts = products.map((p) =>
       transformProductPreview(p, region)

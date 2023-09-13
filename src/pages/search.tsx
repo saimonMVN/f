@@ -19,7 +19,8 @@ import {getCookieByCookiesKey} from "@utils/global";
 interface ISearchProductResponse {
   products: PricedProduct[];
   count: number;
-  nextPage?:null | number
+  nextPage?:null | number;
+  prePage?:null | number
 }
 
 interface SearchProps {
@@ -58,7 +59,6 @@ export default function Search({products}: SearchProps) {
 Search.Layout = Layout;
 
 
-
 export const getServerSideProps: GetServerSideProps<SearchProps> = async ({ locale, req, query }) => {
   const {q, category, collections, tags, types, offset } = query;
   const categoryHandle: string = category as string;
@@ -87,7 +87,7 @@ export const getServerSideProps: GetServerSideProps<SearchProps> = async ({ loca
 
     return {
       props: {
-        products: {...productsData, nextPage:res.nextPage},
+        products: {...productsData, nextPage:res.nextPage, prePage:res.prePage},
         ...(await serverSideTranslations(locale!, ['common', 'forms', 'menu', 'footer'])),
       },
     };
@@ -97,7 +97,8 @@ export const getServerSideProps: GetServerSideProps<SearchProps> = async ({ loca
         products: {
           products: [],
           count: 0,
-          nextPage:null
+          nextPage:null,
+          prePage:null
         },
         ...(await serverSideTranslations(locale!, ['common', 'forms', 'menu', 'footer'])),
       },

@@ -6,25 +6,21 @@ import Button from '@components/ui/button';
 import ProductCard from '@components/product/product-cards/product-card';
 import ProductList from '@components/product/product-cards/product-list-view';
 import ProductCardLoader from '@components/ui/loaders/product-card-loader';
-import cn from 'classnames';
-import { useProductsQuery } from '@framework/product/get-all-products';
-import { LIMITS } from '@framework/utils/limits';
-import { Product } from '@framework/types';
 import {PricedProduct} from "@medusajs/medusa/dist/types/pricing";
 import {useState} from "react";
 import {useCart} from "medusa-react";
 import usePreviews from "@lib/hooks/use-previews";
+import {BsCaretLeftFill, BsFillCaretRightFill} from "react-icons/bs";
 
 interface ProductGridProps {
   className?: string;
   viewAs: boolean;
 }
-
-
 interface ISearchProductResponse {
   products: PricedProduct[];
   count: number;
-  nextPage?:null | number
+  nextPage?:null | number;
+  prePage?:null | number;
 }
 interface ProductGridProps {
   products: ISearchProductResponse;
@@ -40,11 +36,7 @@ export const ProductGrid: FC<ProductGridProps> = ({ className = '' ,viewAs,produ
   const { cart } = useCart()
   const previews = usePreviews({products: products.products, region: cart?.region })
 
-
-
   const handleNextPage=()=>{
-// offset
-
     router.push(
         {
           pathname,
@@ -56,8 +48,21 @@ export const ProductGrid: FC<ProductGridProps> = ({ className = '' ,viewAs,produ
         undefined,
         { scroll: false }
     );
-
   }
+    const handlePreviousPage=()=>{
+        router.push(
+            {
+                pathname,
+                query: {
+                    ...restQuery,
+                    offset: products.prePage
+                },
+            },
+            undefined,
+            { scroll: false }
+        );
+    }
+
     return (
         <>
             <div
@@ -90,18 +95,30 @@ export const ProductGrid: FC<ProductGridProps> = ({ className = '' ,viewAs,produ
                 }
                 {/* end of error state */}
             </div>
-            {products.nextPage && (
+
+            { previews.length > 0 && <div className="flex justify-center items-center space-x-4 mt-8">
                 <div className="text-center pt-8 xl:pt-10">
                     <Button
                         loading={isLoading}
-                        disabled={isLoading}
-                        onClick={() => handleNextPage()}
-                        className={"w-60 "}
+                        disabled={products.prePage === null}
+                        onClick={() => handlePreviousPage()}
+                        className={"w-30 !h-4"}
                     >
-                        {t('button-load-more')}
+                        <BsCaretLeftFill/>
                     </Button>
                 </div>
-            )}
+                <div className="text-center pt-8 xl:pt-10">
+                    <Button
+                        loading={isLoading}
+                        disabled={!products.nextPage}
+                        onClick={() => handleNextPage()}
+                        className={"w-30 !h-4 "}
+                    >
+                        <BsFillCaretRightFill/>
+                    </Button>
+                </div>
+            </div>
+            }
         </>
     );
 };
