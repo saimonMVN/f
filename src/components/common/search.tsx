@@ -9,6 +9,8 @@ import { useUI } from '@contexts/ui.context';
 import {useCart, useProducts} from "medusa-react";
 import {useRouter} from "next/router";
 import usePreviews from "@lib/hooks/use-previews";
+import useDebounce from '@lib/hooks/use-debounce';
+import { AppConst } from '@utils/app-const';
 
 type Props = {
   className?: string;
@@ -36,13 +38,15 @@ const Search = React.forwardRef<HTMLDivElement, Props>(
     const [inputFocus, setInputFocus] = useState<boolean>(false);
     const [onEnterSearch, setOnEnterSearch] = useState<boolean>(false)
     const { cart } = useCart()
-    const {isLoading, products} = useProducts({q:searchText, cart_id: cart?.id})
+    const searchTextValue = useDebounce(searchText, AppConst.DEBOUNCE_SEARCH_DELAY)
+    const {isLoading, products} = useProducts({q:searchTextValue, cart_id: cart?.id})
 
     const previews = usePreviews({products: products, region: cart?.region })
 
     useFreezeBodyScroll(
         inputFocus || displaySearch || displayMobileSearch
     );
+
     function handleSearch(e: React.SyntheticEvent) {
       e.preventDefault();
       router.push(`/search?q=${searchText}`);
@@ -51,23 +55,23 @@ const Search = React.forwardRef<HTMLDivElement, Props>(
       closeSearch();
       setInputFocus(false);
     }
+
     function handleAutoSearch(e: React.FormEvent<HTMLInputElement>) {
       setOnEnterSearch(false)
       setInputFocus(true);
       setSearchText(e.currentTarget.value);
     }
+
     function clear() {
       setInputFocus(false);
       closeMobileSearch();
       closeSearch();
       setSearchText('')
-
     }
 
     function enableInputFocus() {
       setInputFocus(true);
     }
-
 
     return (
       <div

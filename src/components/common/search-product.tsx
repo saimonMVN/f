@@ -13,12 +13,8 @@ type SearchProductProps = {
 
 };
 
-
-
 const SearchProduct: React.FC<SearchProductProps> = ({ product,previewProduct }) => {
   const { title, handle} = product ?? {};
-
-
 
   return (
       <Link

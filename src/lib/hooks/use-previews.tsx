@@ -14,7 +14,6 @@ const usePreviews = <T extends InfiniteProductPage>({
   region,
 }: UsePreviewProps<T>) => {
 
-  console.log(products, region)
   const previews: ProductPreviewType[] = useMemo(() => {
     if (!products || !region) {
       return []
