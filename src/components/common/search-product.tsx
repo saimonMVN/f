@@ -3,15 +3,21 @@ import Link from '@components/ui/link';
 import { ROUTES } from '@utils/routes';
 import { searchProductPlaceholder } from '@assets/placeholders';
 import { Product } from '@medusajs/medusa';
+import {ProductPreviewType} from "@interfaces/global";
+import {PricedProduct} from "@medusajs/medusa/dist/types/pricing";
+import React from "react";
 
 type SearchProductProps = {
-  product: Product;
+  product: PricedProduct;
+  previewProduct: ProductPreviewType;
+
 };
 
 
 
-const SearchProduct: React.FC<SearchProductProps> = ({ product }) => {
+const SearchProduct: React.FC<SearchProductProps> = ({ product,previewProduct }) => {
   const { title, handle} = product ?? {};
+
 
 
   return (
@@ -40,6 +46,17 @@ const SearchProduct: React.FC<SearchProductProps> = ({ product }) => {
                 {basePrice}
               </del>
           )} */}
+
+            <div className="space-s-2 mb-2">
+          <span className="inline-block font-semibold text-sm sm:text-15px lg:text-base text-skin-primary">
+          {previewProduct.price?.calculated_price}
+          </span>
+              {previewProduct.price?.price_type === 'sale' && (
+                  <del className="text-sm text-gray-400 text-opacity-70">
+                    {previewProduct.price.original_price}
+                  </del>
+              )}
+            </div>
           </div>
         </div>
       </Link>

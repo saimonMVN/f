@@ -14,6 +14,7 @@ import {ROUTES} from "@utils/routes";
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { ProductPreviewType } from 'src/interfaces/global';
 import { isSingleVariantInStockOrBackorder } from 'src/lib/util/is-single-variant-inStock-or-backorder';
+import Head from 'next/head';
 
 interface ProductProps {
   previewProduct: ProductPreviewType;
@@ -72,13 +73,15 @@ const ProductCard = ({
   function handlePopupView() {
     openModal('PRODUCT_VIEW', { pricedProduct, previewProduct });
   }
+
+
   return (
     <article
     className={cn(
       'flex flex-col product-card relative card-image--jump px-2 sm:px-3 overflow-hidden  h-full',
       className
     )}
-    title={previewProduct.title}
+    title={pricedProduct.title}
   >
     <div className="relative flex-shrink-0  mt-4">
       <div className="card-img-container flex overflow-hidden max-w-[230px] mx-auto relative">
