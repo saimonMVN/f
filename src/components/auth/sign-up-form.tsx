@@ -2,52 +2,72 @@ import { useState } from 'react';
 import Input from '@components/ui/form/input';
 import PasswordInput from '@components/ui/form/password-input';
 import Button from '@components/ui/button';
-import { useForm } from 'react-hook-form';
-import Logo from '@components/ui/logo';
-import { useSignUpMutation, SignUpInputType } from '@framework/auth/use-signup';
+import { FieldValues, useForm } from 'react-hook-form';
 import Link from '@components/ui/link';
 import { useTranslation } from 'next-i18next';
 import Image from '@components/ui/image';
 import { useModalAction } from '@components/common/modal/modal.context';
-import Switch from '@components/ui/switch';
 import CloseButton from '@components/ui/close-button';
 import cn from 'classnames';
 import { ROUTES } from '@utils/routes';
+import { useAccount } from '@lib/context/account-context';
+import { medusaClient } from '@lib/config';
 
 interface SignUpFormProps {
   isPopup?: boolean;
   className?: string;
 }
+interface RegisterCredentials extends FieldValues {
+  first_name: string
+  last_name: string
+  email: string
+  password: string
+  phone?: string
+}
+
 
 const SignUpForm: React.FC<SignUpFormProps> = ({
   isPopup = true,
   className,
 }) => {
   const { t } = useTranslation();
-  const { mutate: signUp, isLoading } = useSignUpMutation();
   const { closeModal, openModal } = useModalAction();
-  const [remember, setRemember] = useState(false);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SignUpInputType>();
-
+  
+    const { refetchCustomer } = useAccount()
+    const [authError, setAuthError] = useState<string | undefined>(undefined)
+  
+    const handleError = (e: Error) => {
+      if(e.message.includes("422")) {
+        setAuthError(t("common:text-register-user-already-exist-error"))
+      } else {
+        setAuthError(t("common:text-server-error"))
+      }
+    }
+  
+    const {
+      register,
+      handleSubmit,
+      formState: { errors, isSubmitting },
+    } = useForm<RegisterCredentials>()
+  
+    const onSubmit = handleSubmit(async (credentials) => {
+      await medusaClient.customers
+        .create(credentials)
+        .then(() => {
+          refetchCustomer()
+          closeModal()
+        })
+        .catch(handleError)
+    })
+  
   function handleSignIn() {
     return openModal('LOGIN_VIEW');
   }
+
   function handleForgetPassword() {
     return openModal('FORGET_PASSWORD');
   }
-  function onSubmit({ name, email, password, remember_me }: SignUpInputType) {
-    signUp({
-      name,
-      email,
-      password,
-      remember_me,
-    });
-    console.log(name, email, password, 'sign form values');
-  }
+
   return (
     <div
       className={cn(
@@ -84,23 +104,35 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
             </div>
           </div>
           <form
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={onSubmit}
             className="flex flex-col justify-center"
             noValidate
           >
             <div className="flex flex-col space-y-4">
-              <Input
-                label={t('forms:label-name')}
+            <Input
+                label={t('forms:label-first-name-star')}
                 type="text"
+                autoComplete="given-name"
                 variant="solid"
-                {...register('name', {
-                  required: 'forms:name-required',
+                {...register('first_name', {
+                  required: `${t('forms:first-name-required')}`,
                 })}
-                error={errors.name?.message}
+                error={errors.first_name?.message}
               />
               <Input
-                label={t('forms:label-email')}
+                label={t('forms:label-last-name-star')}
+                type="text"
+                autoComplete="family-name"
+                variant="solid"
+                {...register('last_name', {
+                  required: `${t('forms:last-name-required')}`,
+                })}
+                error={errors.last_name?.message}
+              />
+              <Input
+                label={t('forms:label-email-star')}
                 type="email"
+                autoComplete="email"
                 variant="solid"
                 {...register('email', {
                   required: `${t('forms:email-required')}`,
@@ -113,25 +145,26 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
                 error={errors.email?.message}
               />
               <PasswordInput
-                label={t('forms:label-password')}
+                label={t('forms:label-password-star')}
                 error={errors.password?.message}
                 {...register('password', {
                   required: `${t('forms:password-required')}`,
+                  pattern: {
+                    value: /^(?=.*[A-Za-z])(?=.*\d).{6,}$/,
+                    message: t('forms:password-validation-error'),
+                  },
                 })}
               />
-              <div className="flex items-center justify-center">
-                <div className="flex items-center flex-shrink-0">
-                  <label className="switch relative inline-block w-10 cursor-pointer">
-                    <Switch checked={remember} onChange={setRemember} />
-                  </label>
 
-                  <label
-                    htmlFor="remember"
-                    className="flex-shrink-0 text-sm text-heading ps-5 mt-1 cursor-pointer"
-                  >
-                    {t('forms:label-remember-me')}
-                  </label>
-                </div>
+              <Input
+                label={t('forms:label-phone')}
+                type="text"
+                autoComplete="tel"    
+                variant="solid"
+                {...register('phone')}
+                error={errors.phone?.message}
+              />
+              <div className="flex items-center justify-center">
                 <div className="flex ms-auto mt-[2px]" onClick={closeModal}>
                   <Link
                     href={ROUTES.PRIVACY}
@@ -141,11 +174,20 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
                   </Link>
                 </div>
               </div>
+
+              {authError && (
+          <div>
+            <span className="text-rose-500 w-full text-small-regular">
+              {authError}
+            </span>
+          </div>
+        )}
+
               <div className="relative">
                 <Button
                   type="submit"
-                  loading={isLoading}
-                  disabled={isLoading}
+                  loading={isSubmitting}
+                  disabled={isSubmitting}
                   className="h-11 md:h-12 w-full mt-2 font-15px md:font-15px tracking-normal"
                   variant="formButton"
                 >

@@ -29,9 +29,9 @@ export const AddToCart = ({ variantId, quantity, isBorderRounded }: Props) => {
   };
   return (
     <button
-      className={`w-full min-w-[150px] px-4 py-2.5 bg-skin-primary text-skin-inverted text-[14px] items-center justify-center focus:outline-none focus-visible:outline-none `}
-      aria-label="Count Button"
-      onClick={handleAddClick}
+    className={`min-w-[150px] px-4 py-2 bg-skin-primary text-skin-inverted text-[13px] items-center justify-center focus:outline-none focus-visible:outline-none ${isBorderRounded ? 'rounded': 'rounded-full'}`}
+    aria-label="Count Button"
+    onClick={handleAddClick}
       // disabled={disabled || outOfStock}
     >
       {t('text-add-to-cart')}

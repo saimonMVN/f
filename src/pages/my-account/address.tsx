@@ -5,9 +5,15 @@ import AddressGrid from '@components/address/address-grid';
 import { useAddressQuery } from '@framework/address/address';
 import { GetStaticProps } from 'next';
 import Seo from '@components/seo/seo';
+import { useAccount } from '@lib/context/account-context';
 
 export default function AccountDetailsPage() {
-  let { data, isLoading } = useAddressQuery();
+  const { customer, retrievingCustomer } = useAccount()
+
+  if (retrievingCustomer || !customer) {
+    return null
+  }
+
   return (
     <>
       <Seo
@@ -16,11 +22,7 @@ export default function AccountDetailsPage() {
         path="my-account/address"
       />
       <AccountLayout>
-        {!isLoading ? (
-          <AddressGrid address={data?.data} />
-        ) : (
-          <div>Loading...</div>
-        )}
+          <AddressGrid customer={customer} />
       </AccountLayout>
     </>
   );

@@ -4,8 +4,15 @@ import AccountDetails from '@components/my-account/account-details';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { GetStaticProps } from 'next';
 import Seo from '@components/seo/seo';
+import { useAccount } from '@lib/context/account-context';
 
 export default function AccountDetailsPage() {
+  const { customer, retrievingCustomer } = useAccount()
+
+  if (retrievingCustomer || !customer) {
+    return null
+  }
+
   return (
     <>
       <Seo
@@ -14,7 +21,7 @@ export default function AccountDetailsPage() {
         path="my-account/account-settings"
       />
       <AccountLayout>
-        <AccountDetails />
+        <AccountDetails customer={customer} />
       </AccountLayout>
     </>
   );

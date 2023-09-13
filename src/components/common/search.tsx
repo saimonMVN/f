@@ -7,6 +7,8 @@ import SearchResultLoader from '@components/ui/loaders/search-result-loader';
 import useFreezeBodyScroll from '@utils/use-freeze-body-scroll';
 import Scrollbar from '@components/ui/scrollbar';
 import { useUI } from '@contexts/ui.context';
+import {useProducts} from "medusa-react";
+import {useRouter} from "next/router";
 
 type Props = {
   className?: string;
@@ -29,29 +31,41 @@ const Search = React.forwardRef<HTMLDivElement, Props>(
       displaySearch,
       closeSearch,
     } = useUI();
+    const router = useRouter();
     const [searchText, setSearchText] = useState('');
     const [inputFocus, setInputFocus] = useState<boolean>(false);
-    const { data, isLoading } = useSearchQuery({
-      text: searchText,
-    });
+
+    const [onEnterSearch, setOnEnterSearch] = useState<boolean>(false)
+
+    const {isLoading, products} = useProducts({q:searchText})
     useFreezeBodyScroll(
-      inputFocus === true || displaySearch || displayMobileSearch
+        inputFocus || displaySearch || displayMobileSearch
     );
     function handleSearch(e: React.SyntheticEvent) {
       e.preventDefault();
+      router.push(`/search?q=${searchText}`);
+      setOnEnterSearch(true)
+      closeMobileSearch();
+      closeSearch();
+      setInputFocus(false);
     }
     function handleAutoSearch(e: React.FormEvent<HTMLInputElement>) {
+      setOnEnterSearch(false)
+      setInputFocus(true);
       setSearchText(e.currentTarget.value);
     }
     function clear() {
-      setSearchText('');
       setInputFocus(false);
       closeMobileSearch();
       closeSearch();
+      setSearchText('')
+
     }
+
     function enableInputFocus() {
       setInputFocus(true);
     }
+
 
     return (
       <div
@@ -91,25 +105,25 @@ const Search = React.forwardRef<HTMLDivElement, Props>(
               <Scrollbar className="os-host-flexbox">
                 <div className="w-full h-[380px]">
                   {isLoading
-                    ? Array.from({ length: 15 }).map((_, idx) => (
-                        <div
-                          key={`search-result-loader-key-${idx}`}
-                          className="py-2.5 ps-5 pe-10 scroll-snap-align-start border-b border-black/5"
-                        >
-                          <SearchResultLoader
-                            key={idx}
-                            uniqueKey={`top-search-${idx}`}
-                          />
-                        </div>
+                      ? Array.from({ length: 15 }).map((_, idx) => (
+                          <div
+                              key={`search-result-loader-key-${idx}`}
+                              className="py-2.5 ps-5 pe-10 scroll-snap-align-start border-b border-black/5"
+                          >
+                            <SearchResultLoader
+                                key={idx}
+                                uniqueKey={`top-search-${idx}`}
+                            />
+                          </div>
                       ))
-                    : data?.map((item, index) => (
-                        <div
-                          key={`search-result-key-${index}`}
-                          className="py-2.5 ps-5 pe-10 border-b border-black/5 scroll-snap-align-start transition-colors duration-200 hover:bg-skin-two"
-                          onClick={clear}
-                        >
-                          <SearchProduct product={item} key={index} />
-                        </div>
+                      : products?.map((item, index:number) => (
+                          <div
+                              key={`search-result-key-${index}`}
+                              className="py-2.5 ps-5 pe-10 border-b border-black/5 scroll-snap-align-start transition-colors duration-200 hover:bg-gray-50"
+                              onClick={clear}
+                          >
+                            <SearchProduct product={item} key={index} />
+                          </div>
                       ))}
                 </div>
               </Scrollbar>

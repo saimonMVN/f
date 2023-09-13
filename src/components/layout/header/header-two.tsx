@@ -25,6 +25,7 @@ import {useRouter} from "next/router";
 import {getDirection} from "@utils/get-direction";
 import {useProductCategories} from "medusa-react";
 import CategoriesHelper from "@utils/SDK/CategoriesHelper";
+import { useAccount } from '@lib/context/account-context';
 
 const AuthMenu = dynamic(() => import('./auth-menu'), {ssr: false});
 const CartButton = dynamic(() => import('@components/cart/cart-button'), {
@@ -44,7 +45,6 @@ const Header: React.FC = () => {
         displayMobileAllCategories,
         openSearch,
         closeSearch,
-        isAuthorized,
     } = useUI();
     const {width} = useWindowSize();
     const {openModal} = useModalAction();
@@ -54,6 +54,9 @@ const Header: React.FC = () => {
     const dir = getDirection(locale);
     const contentWrapperCSS = dir === 'ltr' ? {left: 0} : {right: 0};
     const [categoryMenu, setCategoryMenu] = useState(Boolean(true));
+
+    const { customer } = useAccount()
+    const isAuthorized = customer ? true:false;
 
     const {
         product_categories,

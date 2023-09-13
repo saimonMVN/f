@@ -3,7 +3,7 @@ import { medusaClient } from "@lib/config"
 import { Customer } from "@medusajs/medusa"
 import { useMutation } from "@tanstack/react-query"
 import { useMeCustomer } from "medusa-react"
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/router"
 import React, { createContext, useCallback, useContext, useState } from "react"
 
 export enum LOGIN_VIEW {
@@ -44,7 +44,7 @@ export const AccountProvider = ({ children }: AccountProviderProps) => {
 
   const checkSession = useCallback(() => {
     if (!customer && !retrievingCustomer) {
-      router.push("/account/login")
+      router.push("/signin")
     }
   }, [customer, retrievingCustomer, router])
 

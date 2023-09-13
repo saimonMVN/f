@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useLogoutMutation } from '@framework/auth/use-logout';
 import { useTranslation } from 'next-i18next';
 import LogoutIcon from '@components/icons/account-logout';
+import { useAccount } from '@lib/context/account-context';
 
 type Option = {
   name: string;
@@ -16,6 +17,7 @@ export default function AccountNav({ options }: { options: Option[] }) {
   const { pathname } = useRouter();
   const newPathname = pathname.split('/').slice(2, 3);
   const mainPath = `/${newPathname[0]}`;
+  const { handleLogout } = useAccount()
   return (
     <nav className="flex flex-col pb-2 md:pb-6 border border-skin-base rounded-md overflow-hidden">
       {options.map((item) => {
@@ -41,7 +43,7 @@ export default function AccountNav({ options }: { options: Option[] }) {
       })}
       <button
         className="flex items-center text-sm lg:text-15px text-skin-base py-3.5 px-3.5 xl:px-4 2xl:px-5 mb-1 cursor-pointer focus:outline-none"
-        onClick={() => logout()}
+        onClick={() => handleLogout()}
       >
         <span className="w-6 me-1 ">
           <LogoutIcon className="w-5 md:w-[22px] h-5 md:h-[22px]" />

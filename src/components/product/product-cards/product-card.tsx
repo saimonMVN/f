@@ -39,8 +39,8 @@ function RenderPopupOrAddToCart({
   else if(pricedProduct.variants.length > 1){
     return (
       <button
-        className="w-full min-w-[150px] px-4 py-2.5 bg-skin-primary text-skin-inverted text-[14px] items-center justify-center focus:outline-none focus-visible:outline-none"
-        aria-label="Count Button"
+      className="min-w-[150px] px-4 py-2 bg-skin-primary rounded-full  text-skin-inverted text-[13px] items-center justify-center focus:outline-none focus-visible:outline-none"
+      aria-label="Count Button"
         onClick={handlePopupView}
       >
         {t('text-product-details')}
@@ -74,14 +74,14 @@ const ProductCard = ({
   }
   return (
     <article
-      className={cn(
-        'flex flex-col product-card relative card-image--jump px-2 sm:px-3 overflow-hidden  h-full',
-        className
-      )}
-      title={previewProduct.title}
-    >
-      <div className="relative flex-shrink-0  mt-4">
-        <div className="card-img-container flex overflow-hidden max-w-[230px] mx-auto relative">
+    className={cn(
+      'flex flex-col product-card relative card-image--jump px-2 sm:px-3 overflow-hidden  h-full',
+      className
+    )}
+    title={previewProduct.title}
+  >
+    <div className="relative flex-shrink-0  mt-4">
+      <div className="card-img-container flex overflow-hidden max-w-[230px] mx-auto relative">
           <Image
             src={previewProduct.thumbnail ?? productPlaceholder}
             alt={previewProduct.title || 'Product Image'}
@@ -93,13 +93,13 @@ const ProductCard = ({
         </div>
         <div className="w-full h-full absolute top-0 pt-2.5 md:pt-3.5 z-10 -mx-0.5 sm:-mx-1">
           {previewProduct.price?.price_type === 'sale' && (
-            <span className="text-[10px]  text-skin-inverted uppercase inline-block bg-skin-primary rounded-sm px-2.5 pt-1 pb-[3px] m-2">
+           <span className="text-[10px]  text-skin-inverted uppercase inline-block bg-skin-primary rounded-sm px-2.5 pt-1 pb-[3px] mx-0.5 sm:mx-1">
               {t('text-on-sale')}
             </span>
           )}
           <button
-              className="buttons--quickview px-4 py-2 bg-skin-inverted rounded-full hover:bg-skin-primary hover:text-skin-inverted"
-              aria-label="Quick View Button"
+             className="buttons--quickview px-4 py-2 bg-skin-inverted rounded-full hover:bg-skin-primary hover:text-skin-inverted"
+             aria-label="Quick View Button"
               onClick={handlePopupView}
           >
             <SearchIcon width={iconSize} height={iconSize} opacity="1" />

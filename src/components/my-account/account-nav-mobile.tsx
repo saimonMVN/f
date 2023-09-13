@@ -5,6 +5,7 @@ import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useLogoutMutation } from '@framework/auth/use-logout';
 import LogoutIcon from '@components/icons/account-logout';
+import { useAccount } from '@lib/context/account-context';
 type Option = {
   name: string;
   slug: string;
@@ -27,7 +28,7 @@ export default function AccountNavMobile({ options }: { options: Option[] }) {
     setSelectedItem(slugs);
     router.push(slugs.slug);
   }
-  const { mutate: logout } = useLogoutMutation();
+  const { handleLogout } = useAccount()
 
   return (
     <Listbox value={selectedItem} onChange={handleItemClick}>
@@ -90,7 +91,7 @@ export default function AccountNavMobile({ options }: { options: Option[] }) {
               ))}
               <button
                 className="w-full flex items-center text-sm lg:text-15px text-skin-base py-3 px-4 md:px-5 cursor-pointer focus:outline-none"
-                onClick={() => logout()}
+                onClick={() => handleLogout()}
               >
                 <span className="flex-shrink-0 flex justify-center">
                   <LogoutIcon className="w-5 md:w-[22px] h-5 md:h-[22px]" />

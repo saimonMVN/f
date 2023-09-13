@@ -11,6 +11,7 @@ import { Drawer } from '@components/common/drawer/drawer';
 import { getDirection } from '@utils/get-direction';
 import { useModalAction } from '@components/common/modal/modal.context';
 import { useTranslation } from 'next-i18next';
+import { useAccount } from '@lib/context/account-context';
 const CartButton = dynamic(() => import('@components/cart/cart-button'), {
   ssr: false,
 });
@@ -28,7 +29,6 @@ const BottomNavigation: React.FC = () => {
     closeSidebar,
     displaySidebar,
     toggleMobileSearch,
-    isAuthorized,
   } = useUI();
   const { openModal } = useModalAction();
   const { locale } = useRouter();
@@ -40,6 +40,9 @@ const BottomNavigation: React.FC = () => {
   function handleMobileMenu() {
     return openSidebar();
   }
+
+  const { customer } = useAccount()
+  const isAuthorized = customer ? true:false;
 
   return (
     <>

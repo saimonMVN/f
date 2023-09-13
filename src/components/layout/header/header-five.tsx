@@ -27,6 +27,7 @@ import {FiMapPin} from 'react-icons/fi';
 import MobileAllCategories from "@components/layout/header/mobile-all-categories";
 import {useProductCategories} from "medusa-react";
 import CategoriesHelper from "@utils/SDK/CategoriesHelper";
+import { useAccount } from '@lib/context/account-context';
 
 const AuthMenu = dynamic(() => import('./auth-menu'), {ssr: false});
 const CartButton = dynamic(() => import('@components/cart/cart-button'), {
@@ -49,7 +50,6 @@ const Header: React.FC = () => {
         closeSidebar,
         openSearch,
         closeSearch,
-        isAuthorized,
     } = useUI();
     const {openModal} = useModalAction();
     const siteHeaderRef = useRef() as DivElementRef;
@@ -60,6 +60,9 @@ const Header: React.FC = () => {
     const contentWrapperCSS = dir === 'ltr' ? {left: 0} : {right: 0};
     AddActiveScroll(siteHeaderRef, 130);
     useOnClickOutside(siteSearchRef, () => closeSearch());
+
+    const { customer } = useAccount()
+    const isAuthorized = customer ? true:false;
 
     const {
         product_categories,

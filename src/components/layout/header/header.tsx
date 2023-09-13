@@ -24,8 +24,9 @@ import { getDirection } from '@utils/get-direction';
 import {useRouter} from "next/router";
 import CategoryDropdownSidebar from "@components/category/category-dropdown-sidebar";
 import MobileAllCategories from "@components/layout/header/mobile-all-categories";
-import {useProductCategories} from "medusa-react";
-import CategoriesHelper from "@utils/SDK/CategoriesHelper";
+import { useProductCategories } from 'medusa-react';
+import CategoriesHelper from '@utils/SDK/CategoriesHelper';
+import { useAccount } from '@lib/context/account-context';
 const AuthMenu = dynamic(() => import('./auth-menu'), {ssr: false});
 const CartButton = dynamic(() => import('@components/cart/cart-button'), {
     ssr: false,
@@ -47,17 +48,19 @@ const Header: React.FC = () => {
         closeSidebar,
         openSearch,
         closeSearch,
-        isAuthorized,
     } = useUI();
     const {openModal} = useModalAction();
     const siteHeaderRef = useRef() as DivElementRef;
     const siteSearchRef = useRef() as DivElementRef;
     const [categoryMenu, setCategoryMenu] = useState(Boolean(false));
-    const { locale } = useRouter();
+    const {locale} = useRouter();
     const dir = getDirection(locale);
-    const contentWrapperCSS = dir === 'ltr' ? { left: 0 } : { right: 0 };
+    const contentWrapperCSS = dir === 'ltr' ? {left: 0} : {right: 0};
     AddActiveScroll(siteHeaderRef, 130);
     useOnClickOutside(siteSearchRef, () => closeSearch());
+      
+    const { customer } = useAccount()
+    const isAuthorized = customer ? true:false;
 
     const {
         product_categories,
@@ -68,18 +71,17 @@ const Header: React.FC = () => {
     const menuData = CategoriesHelper.pushCategoriesIntoMenuData(site_header.menu, product_categories)
     const onlyCategories = CategoriesHelper.getCategories(product_categories)
 
-
-
     function handleLogin() {
         openModal('LOGIN_VIEW');
     }
 
-    function handleCategoryMenu() {
-        setCategoryMenu(!categoryMenu);
-    }
-    function handleMobileAllCategories() {
-        return openMobileAllCategories();
-    }
+  function handleCategoryMenu() {
+    setCategoryMenu(!categoryMenu);
+  }
+
+  function handleMobileAllCategories() {
+    return openMobileAllCategories();
+  }
 
     return (
         <>
@@ -92,11 +94,12 @@ const Header: React.FC = () => {
                 )}
             >
                 <div
-                    className="bg-skin-footer  innerSticky w-screen lg:w-full transition-all duration-200 ease-in-out body-font bg-skin-fill z-50">
+                    className="innerSticky w-screen lg:w-full transition-all duration-200 ease-in-out body-font bg-skin-fill z-50">
                     <Search
                         searchId="mobile-search"
                         className="top-bar-search hidden lg:max-w-[600px] absolute z-30 px-4 md:px-6 top-12 xl:top-1"
                     />
+                    
                     {/* End of Mobile search */}
 
                     <div className="top-bar  text-13px text-gray-300 border-b border-white/5">

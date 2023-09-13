@@ -4,8 +4,14 @@ import ChangePassword from '@components/my-account/change-password';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { GetStaticProps } from 'next';
 import Seo from '@components/seo/seo';
+import { useAccount } from '@lib/context/account-context';
 
 export default function ChangePasswordPage() {
+  const { customer, retrievingCustomer } = useAccount()
+
+  if (retrievingCustomer || !customer) {
+    return null
+  }
   return (
     <>
       <Seo
@@ -14,7 +20,7 @@ export default function ChangePasswordPage() {
         path="my-account/change-password"
       />
       <AccountLayout>
-        <ChangePassword />
+        <ChangePassword customer={customer} />
       </AccountLayout>
     </>
   );
