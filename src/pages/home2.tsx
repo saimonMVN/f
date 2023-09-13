@@ -1,6 +1,5 @@
 import Testimonial from '@components/common/testimonial';
 import Seo from '@components/seo/seo';
-import FeatureGrid from '@components/common/featured-grid';
 import FeatureCarousel from '@components/common/featured-carousel';
 import Layout from '@components/layout/layout-two';
 import Container from '@components/ui/container';
@@ -14,12 +13,7 @@ import {
   homeTwoSidebar as heroSidebar,
   bannerDiscount,
 } from '@framework/static/banner';
-import { GetServerSideProps, GetStaticProps } from 'next';
-import { QueryClient } from 'react-query';
-import { dehydrate } from 'react-query/hydration';
-import { API_ENDPOINTS } from '@framework/utils/api-endpoints';
-import { fetchBestSellerProducts } from '@framework/product/get-all-best-seller-products';
-import { LIMITS } from '@framework/utils/limits';
+import { GetServerSideProps } from 'next';
 import HeroSliderBlock from '@components/hero/hero-slider-block';
 import BannerGrid from '@components/common/banner-grid';
 import BestSellerSidebarProductFeed from '@components/product/feeds/best-seller-sidebar-product-feed';
@@ -33,9 +27,7 @@ import ProductWithBestDeals from '@components/product/product-with-best-deals';
 import { useRouter } from 'next/router';
 import { getDirection } from '@utils/get-direction';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
-import Cookies from 'js-cookie';
 import { AppConst } from '@utils/app-const';
-import { fetchProductsList } from 'src/lib/data';
 import { getCookieByCookiesKey } from '@utils/global';
 import medusaRequest from '@lib/medusa-fetch';
 

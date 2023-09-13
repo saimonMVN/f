@@ -3,19 +3,27 @@ import Layout from '@components/layout/layout';
 import { ShopFilters } from '@components/search/filters';
 import { ProductGrid } from '@components/product/product-grid';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import DownloadApps from '@components/common/download-apps';
-import { GetStaticProps } from 'next';
+import {GetServerSideProps, GetStaticProps} from 'next';
 import PageHeroSection from '@components/ui/page-hero-section';
 import { useTranslation } from 'next-i18next';
 import SearchTopBar from '@components/search/search-top-bar';
 import { Element } from 'react-scroll';
 import Seo from '@components/seo/seo';
 import {useState} from "react";
+import {getCookieByCookiesKey} from "@utils/global";
+import {AppConst} from "@utils/app-const";
+import medusaRequest from "@lib/medusa-fetch";
+import {PricedProduct} from "@medusajs/medusa/dist/types/pricing";
 
-export default function Products() {
+
+interface IProductPropsType {
+  products: PricedProduct[];
+  error?: string | undefined | null;
+}
+export default function Products({ products, error }: IProductPropsType) {
   const { t } = useTranslation('common');
   const [viewAs, setViewAs] = useState(Boolean(true));
-
+console.log(products,"products")
   return (
     <>
       <Seo
@@ -32,7 +40,7 @@ export default function Products() {
           </div>
           <div className="w-full lg:-ms-2 xl:-ms-8 lg:-mt-1">
             <SearchTopBar viewAs={viewAs} onNavClick={setViewAs}/>
-            <ProductGrid  key="prouctGrid" viewAs={viewAs}/>
+            <ProductGrid  key="prouctGrid" viewAs={viewAs} products={products}/>
           </div>
         </Element>
       </Container>
@@ -42,15 +50,38 @@ export default function Products() {
 
 Products.Layout = Layout;
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale!, [
-        'common',
-        'forms',
-        'menu',
-        'footer',
-      ])),
-    },
-  };
+export const getServerSideProps: GetServerSideProps<
+    IProductPropsType
+> = async ({locale, req}) => {
+  try {
+    const cookies = req.headers.cookie || ""
+    const cart_id = getCookieByCookiesKey(AppConst.CART_COOKIES_ID, cookies);
+    const res = await medusaRequest('GET', '/products', {
+      query: {
+        cart_id,
+      },
+    });
+
+    if (
+        !res.ok
+    ) {
+      return {notFound: true};
+    }
+    return {
+      props: {
+        products: res.body,
+        error: null,
+        ...(await serverSideTranslations(locale!, [
+          'common',
+          'forms',
+          'menu',
+          'footer',
+        ])),
+      },
+    };
+  } catch (err) {
+    return {
+      notFound: true,
+    };
+  }
 };
