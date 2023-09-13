@@ -4,7 +4,7 @@ import cn from 'classnames';
 import Layout from '@components/layout/layout';
 import { useTranslation } from 'next-i18next';
 
-const deliveryTip = ['$5', '$10', '$15', '$20', '$25'];
+const deliveryTip = ['$0', '$5', '$10', '$15', '$20', '$25'];
 
 export default function DeliveryTips() {
   const { t } = useTranslation('common');

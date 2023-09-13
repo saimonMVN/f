@@ -8,38 +8,51 @@ import DeliverySchedule from './schedule';
 import DeliveryTips from './delivery-tips';
 import StripeCheckoutInlineForm from './stripe-checkout-inline-form';
 import { useTranslation } from 'next-i18next';
+import { useCart } from 'medusa-react';
+import ShippingAddress from './addresses';
+import Addresses from './addresses';
 
 const data = [
   {
     id: 1,
     title: 'text-delivery-address',
-    component: <Address />,
+    component: <Addresses />,
   },
-  {
-    id: 2,
-    title: 'text-delivery-schedule',
-    component: <DeliverySchedule />,
-  },
-  {
-    id: 3,
-    title: 'text-contact-number',
-    component: <Contact />,
-  },
-  {
-    id: 4,
-    title: 'text-payment-option',
-    component: <StripeCheckoutInlineForm />,
-  },
-  {
-    id: 5,
-    title: 'text-delivery-instructions',
-    component: <DeliveryNotes />,
-  },
-  {
-    id: 6,
-    title: 'text-delivery-tip',
-    component: <DeliveryTips />,
-  },
+  // {
+  //   id: 2,
+  //   title: 'text-billing-address',
+  //   component: <Address />,
+  // },
+  // {
+  //   id: 3,
+  //   title: 'text-billing-address',
+  //   component: <Address />,
+  // },
+  // {
+  //   id: 2,
+  //   title: 'text-delivery-schedule',
+  //   component: <DeliverySchedule />,
+  // },
+  // {
+  //   id: 3,
+  //   title: 'text-contact-number',
+  //   component: <Contact />,
+  // },
+  // {
+  //   id: 4,
+  //   title: 'text-payment-option',
+  //   component: <StripeCheckoutInlineForm />,
+  // },
+  // {
+  //   id: 5,
+  //   title: 'text-delivery-instructions',
+  //   component: <DeliveryNotes />,
+  // },
+  // {
+  //   id: 6,
+  //   title: 'text-delivery-tip',
+  //   component: <DeliveryTips />,
+  // },
 ];
 
 const CheckoutDetails: React.FC = () => {
@@ -50,6 +63,11 @@ const CheckoutDetails: React.FC = () => {
       setBindIndex(itemIndex);
     }
   };
+  const { cart } = useCart()
+
+  if (!cart?.id) {
+    return null
+  }
   return (
     <div className="border border-skin-base bg-skin-fill rounded-md">
       {data?.map((item, index) => {
@@ -82,7 +100,7 @@ const CheckoutDetails: React.FC = () => {
                   <Button
                     onClick={() => changeItem(index + 1)}
                     variant="formButton"
-                    className="bg-skin-primary text-skin-inverted rounded font-medium font-[14px] px-4 py-3 "
+                    className="bg-skin-primary text-skin-inverted rounded font-medium px-4 py-3 "
                   >
                     {t('button-next-steps')}
                   </Button>

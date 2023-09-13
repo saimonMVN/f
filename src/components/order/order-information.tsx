@@ -1,23 +1,29 @@
 import { IoCheckmarkCircle } from 'react-icons/io5';
 import OrderDetails from '@components/order/order-details';
-import { useOrderQuery } from '@framework/order/get-order';
-import { useRouter } from 'next/router';
-import usePrice from '@framework/product/use-price';
 import { useTranslation } from 'next-i18next';
+import { formatAmount, useMeCustomer } from 'medusa-react';
+import { Order } from '@medusajs/medusa';
 
-export default function OrderInformation() {
-  const {
-    query: { id },
-  } = useRouter();
+interface IOrderDetailsPropsType {
+  order: Order;
+  error?: string | undefined | null;
+}
+
+
+export default function OrderInformation({order}: IOrderDetailsPropsType) {
   const { t } = useTranslation('common');
-  const { data, isLoading } = useOrderQuery(id?.toString()!);
-  const { price: total } = usePrice(
-    data && {
-      amount: data.shipping_fee ? data.total + data.shipping_fee : data.total,
-      currencyCode: 'USD',
+  const {customer} = useMeCustomer()
+
+  console.log(order)
+
+  const getAmount = (amount?: number | null) => {
+    if (!amount) {
+      return
     }
-  );
-  if (isLoading) return <p>Loading...</p>;
+
+    return formatAmount({ amount, region: order.region, includeTaxes: false })
+  }
+
   return (
     <div className="xl:px-32 2xl:px-44 3xl:px-56 py-16 lg:py-20">
       <div className="border border-skin-base bg-skin-secondary px-4 lg:px-5 py-4 rounded-md flex items-center justify-start text-skin-base text-sm md:text-base mb-6 lg:mb-8">
@@ -32,31 +38,32 @@ export default function OrderInformation() {
           <span className="uppercase text-xs block text-skin-muted font-normal leading-5">
             {t('text-order-number')}:
           </span>
-          {data?.tracking_number}
+          {/* #{order.display_id}<br /> */}
+          {order.id.split("order_")[1]}
         </li>
         <li className="text-skin-base font-semibold text-base lg:text-lg border-b md:border-b-0 md:border-r border-dashed border-gray-300 px-4 lg:px-6 xl:px-8 py-4 md:py-5 lg:py-6 last:border-0">
           <span className="uppercase text-[11px] block text-skin-muted font-normal leading-5">
             {t('text-date')}:
           </span>
-          April 22, 2021
+          {new Date(order.created_at).toDateString()}
         </li>
         <li className="text-skin-base font-semibold text-base lg:text-lg border-b md:border-b-0 md:border-r border-dashed border-gray-300 px-4 lg:px-6 xl:px-8 py-4 md:py-5 lg:py-6 last:border-0">
           <span className="uppercase text-[11px] block text-skin-muted font-normal leading-5">
             {t('text-email')}:
           </span>
-          {data?.customer.email}
+          {order.customer.email}
         </li>
         <li className="text-skin-base font-semibold text-base lg:text-lg border-b md:border-b-0 md:border-r border-dashed border-gray-300 px-4 lg:px-6 xl:px-8 py-4 md:py-5 lg:py-6 last:border-0">
           <span className="uppercase text-[11px] block text-skin-muted font-normal leading-5">
             {t('text-total')}:
           </span>
-          {total}
+          {getAmount(order.total)}
         </li>
         <li className="text-skin-base font-semibold text-base lg:text-lg border-b md:border-b-0 md:border-r border-dashed border-gray-300 px-4 lg:px-6 xl:px-8 py-4 md:py-5 lg:py-6 last:border-0">
           <span className="uppercase text-[11px] block text-skin-muted font-normal leading-5">
             {t('text-payment-method')}:
           </span>
-          {data?.payment_gateway}
+          Cash on Delivery
         </li>
       </ul>
 
@@ -64,7 +71,7 @@ export default function OrderInformation() {
         {t('text-pay-cash')}
       </p>
 
-      <OrderDetails />
+      <OrderDetails order={order} />
     </div>
   );
 }

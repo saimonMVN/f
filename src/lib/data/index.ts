@@ -121,13 +121,13 @@ export const fetchProductsList = async ({
   queryParams,
 }: FetchProductListParams) => {
   const { products, count, offset } = await medusaClient.products.list({
-    limit: 12,
+    limit: 2,
     offset: pageParam,
     ...queryParams,
   });
 
   return {
     response: { products, count },
-    nextPage: count > offset + 12 ? offset + 12 : null,
+    nextPage: count > offset + 2 ? offset + 2 : null,
   };
 };

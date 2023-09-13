@@ -28,6 +28,7 @@ interface SearchProps {
 export default function Search({products}: SearchProps) {
   const [viewAs, setViewAs] = useState(Boolean(true));
 
+
   return (
       <>
         <Seo

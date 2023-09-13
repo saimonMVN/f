@@ -36,12 +36,8 @@ export const ProductGrid: FC<ProductGridProps> = ({ className = '' ,viewAs,produ
   const router = useRouter();
   const { pathname, query } = router;
   const { offset, ...restQuery } = query;
-
-
   const [isLoading, setIsLoading] = useState(!products.products)
-
   const { cart } = useCart()
-
   const previews = usePreviews({products: products.products, region: cart?.region })
 
 
@@ -84,10 +80,11 @@ export const ProductGrid: FC<ProductGridProps> = ({ className = '' ,viewAs,produ
                         pricedProduct={products.products[inx]}
                         previewProduct={product}
                     />
-                )): products.products.map((product) => (
+                )): previews.map((product,inx) => (
                     <ProductList
                         key={`product--key-${product.id}`}
-                        product={product}
+                        pricedProduct={products.products[inx]}
+                        previewProduct={product}
                     />
                 ))
                 }

@@ -1,4 +1,4 @@
-import NativeSelect, { NativeSelectProps } from "@components/common/native-select"
+  import NativeSelect, { NativeSelectProps } from "@components/common/native-select"
 import { useCart, useRegions } from "medusa-react"
   import { forwardRef, useImperativeHandle, useMemo, useRef } from "react"
   

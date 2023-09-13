@@ -2,20 +2,36 @@ import Container from '@components/ui/container';
 import Layout from '@components/layout/layout';
 import OrderInformation from '@components/order/order-information';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { GetStaticProps } from 'next';
+import { GetServerSideProps } from 'next';
 import Divider from '@components/ui/divider';
-import { useEffect } from 'react';
-import { useCart } from '@contexts/cart/cart.context';
 import Seo from '@components/seo/seo';
+import WithAuth from '@components/hoc/withAuth';
+import { useRouter } from 'next/router';
+import { useOrder } from 'medusa-react';
 
-export default function Order() {
-  const { resetCart } = useCart();
-  useEffect(() => {
-    resetCart();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+const Order: React.FC = () => {
+  const router = useRouter();
+  const {id} = router.query;
+
+  if(!id && typeof id !== 'string'){
+    return null
+  }
+
+  const { 
+    order, 
+    isLoading, 
+  } = useOrder(id as string)
+
+  if(isLoading){
+    return <div>Loading...</div>
+  }
+
+  if(!order){
+    router.push("/404")
+  }
+
   return (
-    <>
+    <Layout>
       <Seo
         title="Order"
         description="Fastest E-commerce template built with React, NextJS, TypeScript, React-Query and Tailwind CSS."
@@ -23,24 +39,27 @@ export default function Order() {
       />
       <Divider />
       <Container>
-        <OrderInformation />
+        {order &&
+        <OrderInformation order={order} />
+        }
       </Container>
       <Divider />
-    </>
+    </Layout>
   );
 }
 
-Order.Layout = Layout;
+export default WithAuth(Order)
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale!, [
-        'common',
-        'forms',
-        'menu',
-        'footer',
-      ])),
-    },
-  };
-};
+
+export const getServerSideProps: GetServerSideProps = async ({locale}) => {
+      return {
+        props: {
+            ...(await serverSideTranslations(locale!, [
+              'common',
+              'forms',
+              'menu',
+              'footer',
+            ])),
+        },
+      };
+    }
