@@ -14,16 +14,23 @@ import {getCookieByCookiesKey} from "@utils/global";
 import {AppConst} from "@utils/app-const";
 import medusaRequest from "@lib/medusa-fetch";
 import {PricedProduct} from "@medusajs/medusa/dist/types/pricing";
+import {fetchProductsList} from "@lib/data";
 
 
-interface IProductPropsType {
+interface IProductResponse {
   products: PricedProduct[];
-  error?: string | undefined | null;
+  count: number;
+  nextPage?:null | number;
+  prePage?:null | number
 }
-export default function Products({ products, error }: IProductPropsType) {
+
+interface IProductProps {
+  products: IProductResponse;
+}
+export default function Products({ products }: IProductProps) {
   const { t } = useTranslation('common');
   const [viewAs, setViewAs] = useState(Boolean(true));
-console.log(products,"products")
+
   return (
     <>
       <Seo
@@ -50,38 +57,49 @@ console.log(products,"products")
 
 Products.Layout = Layout;
 
-export const getServerSideProps: GetServerSideProps<
-    IProductPropsType
-> = async ({locale, req}) => {
+export const getServerSideProps: GetServerSideProps<IProductProps> = async ({ locale, req, query }) => {
+  const {q, category, collections, tags, types, offset } = query;
+  const categoryHandle: string = category as string;
+  const collectionsIds: string = collections as string;
+  const tagIds: string = tags as string;
+  const typeIds: string = types as string;
+  const searchKeyword:string =q as string;
+  const cookies = req.headers.cookie || ""
+  const cart_id = getCookieByCookiesKey(AppConst.CART_COOKIES_ID, cookies) as string;
+  const offsetData:string = offset as string
+
   try {
-    const cookies = req.headers.cookie || ""
-    const cart_id = getCookieByCookiesKey(AppConst.CART_COOKIES_ID, cookies);
-    const res = await medusaRequest('GET', '/products', {
-      query: {
+    const res = await fetchProductsList({
+      pageParam: offsetData ? Number(offsetData) : 0 ,
+      queryParams: {
         cart_id,
+        category_id: [categoryHandle],
+        collection_id: [collectionsIds],
+        tags: [tagIds],
+        type_id: [typeIds],
+        q:searchKeyword
       },
     });
 
-    if (
-        !res.ok
-    ) {
-      return {notFound: true};
-    }
+    const productsData: IProductResponse = res.response;
+
     return {
       props: {
-        products: res.body,
-        error: null,
-        ...(await serverSideTranslations(locale!, [
-          'common',
-          'forms',
-          'menu',
-          'footer',
-        ])),
+        products: {...productsData, nextPage:res.nextPage, prePage:res.prePage},
+        ...(await serverSideTranslations(locale!, ['common', 'forms', 'menu', 'footer'])),
       },
     };
-  } catch (err) {
+  } catch (error) {
     return {
-      notFound: true,
+      props: {
+        products: {
+          products: [],
+          count: 0,
+          nextPage:null,
+          prePage:null
+        },
+        ...(await serverSideTranslations(locale!, ['common', 'forms', 'menu', 'footer'])),
+      },
     };
   }
 };
