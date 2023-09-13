@@ -12,7 +12,7 @@ import {
     homeThreeHeroSlider as heroSlider,
     bannersGridHero as bannerTwo, bannerDiscount, bannersGridHero2 as bannerTwo2,
 } from '@framework/static/banner';
-import {GetStaticProps} from 'next';
+import {GetServerSideProps, GetStaticProps} from 'next';
 import {QueryClient} from 'react-query';
 import {dehydrate} from 'react-query/hydration';
 import {API_ENDPOINTS} from '@framework/utils/api-endpoints';
@@ -25,8 +25,21 @@ import CategoryGridListBlock from "@components/common/category-grid-list-block";
 import BannerAllCarousel from "@components/common/banner-all-carousel";
 import ListingTabsClothFeed from "@components/product/feeds/listingtabs-cloth-feed";
 import BestSellerProductFeed from "@components/product/feeds/best-seller-product-feed";
+import {getCookieByCookiesKey} from "@utils/global";
+import {AppConst} from "@utils/app-const";
+import {useCart} from "medusa-react";
+import {useElectronicProductsQuery} from "@framework/product/get-all-electronic-products";
+import {medusaClient} from "@lib/config";
 
 export default function Home() {
+
+    // const {cart}=useCart()
+    // const {data:Products, isLoading} = useElectronicProductsQuery({
+    //     limit: LIMITS.ELETRONIC_PRODUCTS_LIMITS,
+    //     // @ts-ignore
+    //     cart_id:cart?.id
+    // });
+
     return (
         <>
             <Seo
@@ -56,7 +69,10 @@ export default function Home() {
                     className="mb-8 lg:mb-12"
                     girdClassName="xl:gap-5 "
                 />
-                <ListingTabsElectronicFeed colSiderbar={false} borderCarousel={true}/>
+                {/*@ts-ignore*/}
+
+                <ListingTabsElectronicFeed products={Products.products} colSiderbar={false} borderCarousel={true}/>
+
                 <BannerGridTwo
                     data={bannerTwo2}
                     className="mb-8 lg:mb-12"
@@ -69,16 +85,17 @@ export default function Home() {
                     className="mb-8 lg:mb-12"
                 />
             </Container>
-
-
         </>
     );
 }
 
 Home.Layout = Layout;
 
-export const getStaticProps: GetStaticProps = async ({locale}) => {
+export const getServerSideProps: GetServerSideProps = async ({locale,req}) => {
     const queryClient = new QueryClient();
+    const cookies = req.headers.cookie || ""
+    const cart_id = getCookieByCookiesKey(AppConst.CART_COOKIES_ID, cookies);
+
 
     await queryClient.prefetchQuery(
         [
@@ -98,6 +115,6 @@ export const getStaticProps: GetStaticProps = async ({locale}) => {
                 'footer',
             ])),
         },
-        revalidate: 60,
+
     };
 };
