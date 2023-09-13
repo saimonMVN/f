@@ -277,5 +277,7 @@
     "text-user-address-add-failed": "Failed to add address, please try again.",
     "text-user-address-update-failed": "Failed to update address, please try again.",
     "text-user-address-delete-failed": "Failed to delete address, please try again.",
-    "text-tax" : "Tax"
+    "text-tax" : "Tax",
+    "text-discount" : "Discount",
+    "text-giftcard" : "Giftcard"
 }
