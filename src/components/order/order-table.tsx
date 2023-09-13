@@ -29,7 +29,7 @@ export const Status: React.FC<{ item?: any }> = ({ item }) => {
         className="bullet"
         style={{ backgroundColor: item?.status?.color }}
       />
-      {item?.status?.name}
+      {item?.status}
     </span>
   );
 };
@@ -37,7 +37,7 @@ export const Status: React.FC<{ item?: any }> = ({ item }) => {
 const columns = [
   {
     title: 'Order Number',
-    dataIndex: 'tracking_number',
+    dataIndex: 'display_id',
     key: 'tracking_number',
     className: 'id-cell',
   },

@@ -1,14 +1,15 @@
 import usePrice from '@framework/product/use-price';
 import { calculateTotal } from '@contexts/cart/cart.utils';
+import { formatAmount } from 'medusa-react';
+import { Order } from '@medusajs/medusa';
 
-export const TotalPrice: React.FC<{ items?: any }> = ({ items }) => {
-  const { price } = usePrice({
-    amount: Math.round(
-      calculateTotal(items?.products) + items?.delivery_fee - items?.discount
-    ),
-    currencyCode: 'USD',
-  });
-  return <span className="total_price">{price}</span>;
+export const TotalPrice: React.FC<{ items: Order }> = ({ items }) => {
+  return <span className="total_price">
+    { formatAmount({
+    amount: items.total || 0,
+    region: items.region,
+    includeTaxes: false,
+  })}</span>;
 };
 
 export const DiscountPrice = (discount: any) => {
@@ -28,9 +29,9 @@ export const DeliveryFee = (delivery: any) => {
 };
 
 export const SubTotalPrice: React.FC<{ items?: any }> = ({ items }) => {
-  const { price } = usePrice({
-    amount: calculateTotal(items),
-    currencyCode: 'USD',
-  });
-  return <>{price}</>;
+  return <>    { formatAmount({
+    amount: items.subtotal || 0,
+    region: items.region,
+    includeTaxes: false,
+  })}</>;
 };
