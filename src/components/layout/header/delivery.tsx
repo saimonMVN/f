@@ -4,13 +4,15 @@ import { FaChevronDown } from 'react-icons/fa';
 import LocationIcon from '@components/icons/location-icon';
 import { useModalAction } from '@components/common/modal/modal.context';
 import { useUI } from '@contexts/ui.context';
+import { useAccount } from '@lib/context/account-context';
 
 interface DeliveryProps {
   className?: string;
 }
 const Delivery: React.FC<DeliveryProps> = ({ className }) => {
   const { t } = useTranslation('common');
-  const { isAuthorized } = useUI();
+  const { customer } = useAccount()
+  const isAuthorized = customer ? true:false;
   const { openModal } = useModalAction();
   function handleDeliveryView() {
     !isAuthorized ? openModal('LOGIN_VIEW') : openModal('DELIVERY_VIEW');
