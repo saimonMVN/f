@@ -27,11 +27,15 @@ import medusaRequest from '@lib/medusa-fetch';
 
 interface IProductPropsType {
   products: PricedProduct[];
+  count:number;
+  limit:number;
+  offset:number;
   error?: string | undefined | null;
 }
-export default function Home({ products, error }: IProductPropsType) {
+export default function Home({ products, count, limit, offset,  error }: IProductPropsType) {
   const { locale } = useRouter();
   const dir = getDirection(locale);
+
 
   return (
     <>
@@ -107,6 +111,7 @@ export const getServerSideProps: GetServerSideProps<
         const res = await medusaRequest('GET', '/products', {
             query: {
                 cart_id,
+                limit:AppConst.PRODUCT_LIMIT
             },
         });
 
@@ -115,9 +120,14 @@ export const getServerSideProps: GetServerSideProps<
         ) {
             return {notFound: true};
         }
+
+        const {products, count, limit, offset } = res.body
         return {
             props: {
-                products: res.body.products,
+                products: products,
+                count,
+                limit,
+                offset,
                 error: null,
                 ...(await serverSideTranslations(locale!, [
                     'common',
