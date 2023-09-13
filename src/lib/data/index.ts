@@ -1,6 +1,7 @@
 import { medusaClient } from '../config';
 import { StoreGetProductsParams } from '@medusajs/medusa';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import {AppConst} from "@utils/app-const";
 
 const COL_LIMIT = 15;
 
@@ -121,7 +122,7 @@ export const fetchProductsList = async ({
   queryParams,
 }: FetchProductListParams) => {
 
-  const limit =25
+  const limit :number = AppConst.PRODUCT_LIMIT ?? 25
   const { products, count, offset } = await medusaClient.products.list({
     limit: limit,
     offset: pageParam,

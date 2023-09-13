@@ -59,7 +59,6 @@ export default function Search({products}: SearchProps) {
 Search.Layout = Layout;
 
 
-
 export const getServerSideProps: GetServerSideProps<SearchProps> = async ({ locale, req, query }) => {
   const {q, category, collections, tags, types, offset } = query;
   const categoryHandle: string = category as string;
