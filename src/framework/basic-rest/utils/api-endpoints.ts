@@ -20,7 +20,7 @@ export const API_ENDPOINTS = {
   COMPUTER_CATEGORY: '/category_computer.json',
   CLOTH_CATEGORY: '/category_cloth.json',
   FASHION_PRODUCTS: '/products_fashion.json',
-  ELETRONIC_PRODUCTS: '/products_electronic.json',
+  ELETRONIC_PRODUCTS: '/store/products',
   SEARCH: '/search.json',
   ORDERS: '/orders.json',
   ORDER: '/order.json',
