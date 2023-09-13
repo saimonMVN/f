@@ -4,6 +4,7 @@
   "password-required": "You must need to provide your password",
   "password-old-required": "You must need to provide your old password",
   "password-new-required": "You must need to provide your new password",
+  "password-confirm-required": "You must need to provide your new password again",
   "name-required": "You must need to provide your full name",
   "first-name-required": "First name is required",
   "display-name-required": "Display name is required",
@@ -24,13 +25,17 @@
   "label-subject": "Subject",
   "label-message": "Message",
   "label-message-star": "Message *",
-  "label-first-name": "First Name *",
+  "label-first-name": "First Name",
+  "label-first-name-star": "First Name *",
   "label-your-rating": "Your Rating *",
-  "label-last-name": "Last Name *",
+  "label-last-name": "Last Name",
+  "label-last-name-star": "Last Name *",
   "label-name-star": "Name *",
   "label-email-star": "Email *",
+  "label-password-star": "Password *",
   "label-address": "Address *",
-  "label-phone": "Phone/Mobile *",
+  "label-phone": "Phone/Mobile",
+  "label-phone-star": "Phone/Mobile *",
   "label-city": "City/Town",
   "label-display-name": "Display Name *",
   "label-confirm-password": "Confirm Password",
@@ -54,6 +59,6 @@
   "label-contact-title": "Contact Title",
   "contact-title-required": "Contact title is required",
   "default-type-required": "Default type Required",
-  "contact-number-required": "Contact number is required"
-  
+  "contact-number-required": "Contact number is required",
+  "password-validation-error": "Password must be at least 6 characters long and include both letters and numbers."
 }

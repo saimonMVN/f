@@ -1,41 +1,33 @@
 import Link from 'next/link';
-import usePrice from '@framework/product/use-price';
-import { useCart } from '@contexts/cart/cart.context';
 import Text from '@components/ui/text';
 import Button from '@components/ui/button';
-import { CheckoutItem } from '@components/checkout/checkout-card-item';
 import { CheckoutCardFooterItem } from './checkout-card-footer-item';
 import { useTranslation } from 'next-i18next';
 import Router from 'next/router';
 import { ROUTES } from '@utils/routes';
+import useEnrichedLineItems from '@lib/hooks/use-enrich-line-items';
+import { formatAmount, useCart } from 'medusa-react';
+import CheckoutItem from './checkout-card-item';
+import PaymentButton from './payment-button';
+import DiscountCode from './discount-code';
+import GiftCard from './gift-card';
+import { Cart } from '@medusajs/medusa';
 
-const CheckoutCard: React.FC = () => {
+type CheckoutCardProps = {
+  cart: Omit<Cart, "refundable_amount" | "refunded_total">
+}
+
+const CheckoutCard: React.FC<CheckoutCardProps> = ({ cart }) => {
   const { t } = useTranslation('common');
-  const { items, total, isEmpty } = useCart();
-  const { price: subtotal } = usePrice({
-    amount: total,
-    currencyCode: 'USD',
-  });
+
+  const items = useEnrichedLineItems()
+  const isEmpty = cart?.region && cart?.items.length;
+  
   function orderHeader() {
     !isEmpty && Router.push(ROUTES.ORDER);
   }
-  const checkoutFooter = [
-    {
-      id: 1,
-      name: t('text-sub-total'),
-      price: subtotal,
-    },
-    {
-      id: 2,
-      name: t('text-shipping'),
-      price: '$0',
-    },
-    {
-      id: 3,
-      name: t('text-total'),
-      price: subtotal,
-    },
-  ];
+  
+
   return (
     <>
       <div className="border border-skin-base bg-skin-fill rounded-md py-1 xl:py-6 px-4 xl:px-7">
@@ -47,17 +39,102 @@ const CheckoutCard: React.FC = () => {
             {t('text-sub-total')}
           </span>
         </div>
-        {!isEmpty ? (
-          items.map((item) => <CheckoutItem item={item} key={item.id} />)
+        {items && items.length && cart?.region ? (
+          items.map((item) => <CheckoutItem item={item} key={item.id} region={cart.region} />)
         ) : (
           <p className="text-skin-red text-opacity-70 py-4">
             {t('text-empty-cart')}
           </p>
         )}
-        {checkoutFooter.map((item: any) => (
-          <CheckoutCardFooterItem item={item} key={item.id} />
-        ))}
-        <Button
+
+         {cart && 
+         (
+         <>
+         <CheckoutCardFooterItem item={
+            {
+              id: "1",
+              name: t('text-sub-total'),
+              price: formatAmount({
+                amount: cart.subtotal || 0,
+                region: cart.region,
+                includeTaxes: false,
+              }),
+            }
+          } />
+
+         {!!cart.discount_total && (
+         <CheckoutCardFooterItem item={
+            {
+              id: "1",
+              name: t('text-discount'),
+              price: formatAmount({
+                amount: cart.discount_total || 0,
+                region: cart.region,
+                includeTaxes: false,
+              }),
+            }
+          } />
+          )}
+
+         {!!cart.gift_card_total && (
+         <CheckoutCardFooterItem item={
+            {
+              id: "1",
+              name: t('text-gift-card'),
+              price: formatAmount({
+                amount: cart.gift_card_total || 0,
+                region: cart.region,
+                includeTaxes: false,
+              }),
+            }
+          } />
+         )}
+
+         <CheckoutCardFooterItem item={
+            {
+              id: "1",
+              name: t('text-shipping'),
+              price: formatAmount({
+                amount: cart.shipping_total || 0,
+                region: cart.region,
+                includeTaxes: false,
+              }),
+            }
+          } />
+
+         <CheckoutCardFooterItem item={
+            {
+              id: "1",
+              name: t('text-tax'),
+              price: formatAmount({
+                amount: cart.tax_total || 0,
+                region: cart.region,
+                includeTaxes: false,
+              }),
+            }
+          } />
+
+          <CheckoutCardFooterItem item={
+            {
+              id: "1",
+              name: t('text-total'),
+              price: formatAmount({
+                  amount: cart.total || 0,
+                  region: cart.region,
+                  includeTaxes: false,
+                })
+            }
+          } />
+          </>
+          )
+          }
+
+        <DiscountCode cart={cart} />
+        <GiftCard cart={cart} />
+
+
+       <PaymentButton paymentSession={cart?.payment_session} />
+        {/* <Button
           variant="formButton"
           className={`w-full mt-8 mb-5 bg-skin-primary text-skin-inverted rounded font-semibold px-4 py-3 transition-all ${
             isEmpty && 'opacity-40 cursor-not-allowed'
@@ -65,23 +142,19 @@ const CheckoutCard: React.FC = () => {
           onClick={orderHeader}
         >
           {t('button-order-now')}
-        </Button>
+        </Button> */}
       </div>
-      <Text className="mt-8">
+      {/* <Text className="mt-8">
         {t('text-by-placing-your-order')}{' '}
-        <Link href={ROUTES.TERMS}>
-          <a className="text-skin-primary underline font-medium">
+        <Link href={ROUTES.TERMS} className="text-skin-primary underline font-medium">
             {t('text-terms-of-service')}{' '}
-          </a>
         </Link>
         {t('text-and')}{' '}
-        <Link href={ROUTES.PRIVACY}>
-          <a className="text-skin-primary underline font-medium">
+        <Link href={ROUTES.PRIVACY} className="text-skin-primary underline font-medium">
             {t('text-privacy')}
-          </a>
         </Link>
         . {t('text-credit-debit')}
-      </Text>
+      </Text> */}
       <Text className="mt-4">{t('text-bag-fee')}</Text>
     </>
   );

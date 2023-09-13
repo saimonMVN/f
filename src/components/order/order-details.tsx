@@ -4,52 +4,34 @@ import { OrderItem } from '@framework/types';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import Heading from '@components/ui/heading';
-const OrderItemCard = ({ product }: { product: OrderItem }) => {
-  const { price: itemTotal } = usePrice({
-    amount: product.price * product.quantity,
-    currencyCode: 'USD',
-  });
+import { LineItem, Order, Region } from '@medusajs/medusa';
+import useEnrichedLineItems from '@lib/hooks/use-enrich-line-items';
+import LineItemPrice from './line-item-price';
+import { formatAmount } from 'medusa-react';
+
+type ItemsProps = {
+  product: LineItem
+  region: Region
+  cartId: string
+}
+
+const OrderItemCard = ({ product, region, cartId }: ItemsProps) => {
   return (
     <tr
       className="border-b font-normal border-skin-base last:border-b-0"
       key={product.id}
     >
       <td className="p-4">
-        {product.name} * {product.quantity}
+        {product.title} * {product.quantity}
       </td>
-      <td className="p-4">{itemTotal}</td>
+      <td className="p-4"><LineItemPrice item={product} region={region} /></td>
     </tr>
   );
 };
-const OrderDetails: React.FC<{ className?: string }> = ({
-  className = 'pt-10 lg:pt-12',
+const OrderDetails: React.FC<{ className?: string, order: Order }> = ({
+  className = 'pt-10 lg:pt-12', order
 }) => {
   const { t } = useTranslation('common');
-  const {
-    query: { id },
-  } = useRouter();
-  const { data: order, isLoading } = useOrderQuery(id?.toString()!);
-  const { price: subtotal } = usePrice(
-    order && {
-      amount: order.total,
-      currencyCode: 'USD',
-    }
-  );
-  const { price: total } = usePrice(
-    order && {
-      amount: order.shipping_fee
-        ? order.total + order.shipping_fee
-        : order.total,
-      currencyCode: 'USD',
-    }
-  );
-  const { price: shipping } = usePrice(
-    order && {
-      amount: order.shipping_fee,
-      currencyCode: 'USD',
-    }
-  );
-  if (isLoading) return <p>Loading...</p>;
 
   return (
     <div className={className}>
@@ -68,19 +50,29 @@ const OrderDetails: React.FC<{ className?: string }> = ({
           </tr>
         </thead>
         <tbody>
-          {order?.products.map((product, index) => (
-            <OrderItemCard key={index} product={product} />
+          {order?.items.map((product, index) => (
+            <OrderItemCard key={index} product={product} region={order.region} cartId={order.cart_id} />
           ))}
         </tbody>
         <tfoot>
           <tr className="odd:bg-skin-secondary">
             <td className="p-4 italic">{t('text-sub-total')}:</td>
-            <td className="p-4">{subtotal}</td>
+            <td className="p-4">
+            {formatAmount({
+          amount: order.subtotal || 0,
+          region: order.region,
+          includeTaxes: false,
+        })}
+            </td>
           </tr>
           <tr className="odd:bg-skin-secondary">
             <td className="p-4 italic">{t('text-shipping')}:</td>
             <td className="p-4">
-              {shipping}
+            {formatAmount({
+          amount: order.shipping_total || 0,
+          region: order.region,
+          includeTaxes: false,
+        })}
               <span className="text-[13px] font-normal ps-1.5 inline-block">
                 via Flat rate
               </span>
@@ -88,11 +80,20 @@ const OrderDetails: React.FC<{ className?: string }> = ({
           </tr>
           <tr className="odd:bg-skin-secondary">
             <td className="p-4 italic">{t('text-payment-method')}:</td>
-            <td className="p-4">{order?.payment_gateway}</td>
+            <td className="p-4">
+              {/* {order?.payment_gateway} */}
+              Cash On Delivery
+            </td>
           </tr>
           <tr className="odd:bg-skin-secondary">
             <td className="p-4 italic">{t('text-total')}:</td>
-            <td className="p-4">{total}</td>
+            <td className="p-4">
+            {formatAmount({
+          amount: order.total || 0,
+          region: order.region,
+          includeTaxes: false,
+        })}
+            </td>
           </tr>
           <tr className="odd:bg-skin-secondary">
             <td className="p-4 italic">{t('text-note')}:</td>

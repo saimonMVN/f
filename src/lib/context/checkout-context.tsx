@@ -7,7 +7,6 @@ import {
   Customer,
   StorePostCartsCartReq,
 } from "@medusajs/medusa"
-import Wrapper from "@modules/checkout/components/payment-wrapper"
 import { isEqual } from "lodash"
 import {
   formatAmount,
@@ -18,10 +17,11 @@ import {
   useSetPaymentSession,
   useUpdateCart,
 } from "medusa-react"
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/router"
 import React, { createContext, useContext, useEffect, useMemo } from "react"
 import { FormProvider, useForm, useFormContext } from "react-hook-form"
 import { useStore } from "./store-context"
+import Wrapper from "@components/checkout/payment-wrapper"
 
 type AddressValues = {
   first_name: string
@@ -316,7 +316,7 @@ export const CheckoutProvider = ({ children }: CheckoutProviderProps) => {
     complete(undefined, {
       onSuccess: ({ data }) => {
         resetCart()
-        push(`/order/confirmed/${data.id}`)
+        push(`/complete-order/?id=${data.id}`)
       },
     })
   }
