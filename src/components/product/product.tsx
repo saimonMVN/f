@@ -58,7 +58,6 @@ const ProductSingleDetails: React.FC<ProductSingleDetailsProps> = ({ product }) 
     const handleChange = () => {
         setShareButtonStatus(!shareButtonStatus);
     };
-console.log(selectedPrice,"selectedPrice",price)
 
     return (
         <div className="pt-6 md:pt-7 pb-2">

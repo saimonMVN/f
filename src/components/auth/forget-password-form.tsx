@@ -5,6 +5,9 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'next-i18next';
 import { useModalAction } from '@components/common/modal/modal.context';
 import CloseButton from '@components/ui/close-button';
+import { medusaClient } from '@lib/config';
+import { toast } from 'react-toastify';
+import useWindowSize from '@utils/use-window-size';
 
 type FormValues = {
   email: string;
@@ -16,6 +19,7 @@ const defaultValues = {
 
 const ForgetPasswordForm = () => {
   const { t } = useTranslation();
+  const { width } = useWindowSize();
   const { closeModal, openModal } = useModalAction();
   const {
     register,
@@ -30,7 +34,33 @@ const ForgetPasswordForm = () => {
   }
 
   const onSubmit = (values: FormValues) => {
-    console.log(values, 'token');
+    medusaClient.customers.generatePasswordToken({
+      email: values.email,
+    })
+    .then(() => {
+      // successful
+      toast.success('Please check your email for further instruction to reset password.', {
+        progressClassName: 'fancy-progress-bar',
+        position: width! > 768 ? 'bottom-right' : 'top-right',
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    })
+    .catch(() => {
+      // failed
+      toast.warn('Failed to reset password', {
+        progressClassName: 'fancy-progress-bar',
+        position: width! > 768 ? 'bottom-right' : 'top-right',
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    })
   };
 
   return (
