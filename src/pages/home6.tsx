@@ -55,7 +55,7 @@ export default function Home({response}: IHomeProps) {
                 />
 
                 <BestSellerProductFeed products={response.products}  />
-                <ListingTabsElectronicFeed colSiderbar={false} category={undefined} products={response.products} />
+                <ListingTabsElectronicFeed showBanner='right' colSiderbar={false} category={undefined} products={response.products} />
 
                 <BannerGrid
                     data={bannerGrid2}
@@ -63,7 +63,7 @@ export default function Home({response}: IHomeProps) {
                     className="mb-8 lg:mb-12"
                 />
 
-                <ListingTabsClothFeed colSiderbar={false} category={undefined} products={response.products}/>
+                <ListingTabsClothFeed showBanner='left' colSiderbar={false} category={undefined} products={response.products}/>
                 <LatestblogCarousel className="mb-8 lg:mb-12"/>
 
             </Container>
