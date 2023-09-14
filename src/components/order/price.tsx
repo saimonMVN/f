@@ -1,5 +1,4 @@
 import usePrice from '@framework/product/use-price';
-import { calculateTotal } from '@contexts/cart/cart.utils';
 import { formatAmount } from 'medusa-react';
 import { Order } from '@medusajs/medusa';
 
