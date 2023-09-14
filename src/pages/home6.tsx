@@ -20,6 +20,7 @@ import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { getCookieByCookiesKey } from '@utils/global';
 import { fetchProductsList } from '@lib/data';
 import { AppConst } from '@utils/app-const';
+
 interface IHomeProductResponse {
     products: PricedProduct[];
     count: number;
