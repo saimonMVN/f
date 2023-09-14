@@ -57,7 +57,8 @@ const Addresses = () => {
           variant="formButton"
             className="mt-6 bg-skin-primary text-skin-inverted rounded font-medium px-4 py-3 "
             onClick={handleSubmit(setAddresses)}
-            disabled={customer?.shipping_addresses.length===0}
+            disabled={customer?.shipping_addresses.length===0 || cart?.items.length === 0}
+            title={cart?.items.length===0 ? "Your cart is empty": undefined}
           >
             {t("text-continue-to-delivery")}
           </Button>
