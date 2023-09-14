@@ -12,7 +12,6 @@ interface Props {
 }
 
 export const AddToCart = ({ variantId, quantity, isBorderRounded }: Props) => {
-  const { width } = useWindowSize();
   const { t } = useTranslation('common');
   const { addItem } = useStore()
 

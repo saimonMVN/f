@@ -32,10 +32,7 @@ const AddressGrid:  React.FC<MyInformationProps> = ({ customer }) => {
             <RadioGroup.Option
               key={index}
               value={item}
-              className={() =>
-                `border-2 relative shadow-md focus:outline-none rounded-md p-5 block cursor-pointer min-h-[112px] h-full group shipping_address__box`
-              }
-            >
+              className="border-skin-base border-2 relative shadow-md focus:outline-none rounded-md p-5 block cursor-pointer min-h-[112px] h-full group address__box">
               <RadioGroup.Label
                 as="h3"
                 className="text-skin-base font-medium mb-2 -mt-1"
@@ -54,12 +51,11 @@ const AddressGrid:  React.FC<MyInformationProps> = ({ customer }) => {
               >
                 {item.first_name + ' ' + item.last_name}
               </RadioGroup.Description>
-              <div className="flex absolute end-3 top-3 z-10 transition-all shipping_address__actions">
+              <div className="flex absolute end-3 top-3 z-10 lg:opacity-0 transition-all address__actions">
                 <button
                   onClick={() => handlePopupView(item)}
                   className="flex justify-center items-center bg-skin-primary h-6 w-6 rounded-full text-skin-inverted text-opacity-80 text-base"
                 >
-                  <span className="sr-only">{item?.first_name}</span>
                   <TiPencil />
                 </button>
               </div>
@@ -87,4 +83,3 @@ const AddressGrid:  React.FC<MyInformationProps> = ({ customer }) => {
 };
 
 export default AddressGrid;
-

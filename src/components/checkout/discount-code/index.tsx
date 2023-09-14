@@ -89,8 +89,8 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
   }
 
   return (
-    <div className="w-full bg-white flex flex-col mt-8 mb-4">
-      <div className="text-sm">
+    <div className=" bg-white flex flex-col items-end mt-8 mb-4">
+      <div className="max-w-96 text-sm">
         {appliedDiscount ? (
           <div className="flex items-center justify-between">
             <div>

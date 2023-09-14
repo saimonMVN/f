@@ -27,7 +27,7 @@ export default function VariationPrice({
                     </del>
                     <span
                         className="inline-block rounded font-semibold text-xs md:text-sm bg-skin-red text-skin-inverted uppercase px-2 py-1 ms-2.5">
-            {percentageDiff} {t('text-off')}
+            {percentageDiff}% {t('text-off')}
           </span>
                 </>
             )}

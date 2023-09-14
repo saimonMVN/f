@@ -14,6 +14,8 @@ import {AppConst} from "@utils/app-const";
 import {fetchProductsList} from "@lib/data";
 import {PricedProduct} from "@medusajs/medusa/dist/types/pricing";
 import {getCookieByCookiesKey} from "@utils/global";
+import Button from '@components/ui/button';
+import { useRouter } from 'next/router';
 
 
 interface ISearchProductResponse {
@@ -27,6 +29,7 @@ interface SearchProps {
   response: ISearchProductResponse;
 }
 export default function Search({response}: SearchProps) {
+  const router = useRouter()
   const [viewAs, setViewAs] = useState(Boolean(true));
 
 
@@ -49,6 +52,13 @@ export default function Search({response}: SearchProps) {
             <div className="w-full lg:-ms-2 xl:-ms-8 lg:-mt-1">
               <SearchTopBar viewAs={viewAs} onNavClick={setViewAs}/>
               <ProductGrid products={response} key="prouctGrid" viewAs={viewAs}/>
+              {response.count===0 && 
+              <div className='flex items-center flex-col'>
+                <div>No product found</div>
+                <div>What you search may be not be found, Please search with another keyword</div>
+                <Button onClick={()=> router.push("/")} className='mt-10'>Back to Home</Button>
+              </div>
+              }
             </div>
           </Element>
         </Container>

@@ -21,7 +21,7 @@ const CheckoutPage: React.FC = () => {
       />
        <Container className="py-10 2xl:py-12 border-t border-skin-base checkout">
         <div className="flex  mx-auto flex-col">
-          <div className="flex flex-col lg:grid lg:grid-cols-12 grid-cols-1 flex-wrap gap-8">
+          <div className="flex flex-col xl:grid xl:grid-cols-12 grid-cols-1 flex-wrap gap-8">
             <div className="w-full col-start-1 col-end-10">
             <CheckoutLoader />
               <CheckoutForm />
