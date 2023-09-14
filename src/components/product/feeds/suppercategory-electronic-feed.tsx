@@ -1,22 +1,24 @@
-import { LIMITS } from '@framework/utils/limits';
+import { FC } from 'react';
 import SupperCategoryList from "@components/suppercategory/suppercategory-list";
 import SupperCategoryContainer from "@components/suppercategory/suppercategory-container";
-import {useElectronicProductsQuery} from "@framework/product/get-all-electronic-products";
-import { useElectronicCategoryQuery } from '@framework/product/get-electronic-category';
 import {useRouter} from "next/router";
 import {getDirection} from "@utils/get-direction";
-import {IoIosArrowBack} from "react-icons/io";
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
-export default function SupperCategoryElectronicFeed() {
-  const { data: category } = useElectronicCategoryQuery({
-    limit: LIMITS.ELETRONIC_PRODUCTS_LIMITS,
-  });
-  const { data: products, isLoading, error } = useElectronicProductsQuery({
-    limit: LIMITS.ELETRONIC_PRODUCTS_LIMITS,
-  });
+interface ProductFeedProps {
+  className?: string;
+  products: PricedProduct[]
+}
+
+const SupperCategoryElectronicFeed: FC<ProductFeedProps> = ({ className, products }) => {
   const { locale } = useRouter();
   const dir = getDirection(locale);
   const backgroundThumbnail = dir === 'ltr' ? '/assets/images/collection/cate_1.jpg' : '/assets/images/collection/cate_1_rtl.jpg';
+
+  const category = {
+    name: "Electronics",
+
+  }
 
   return (
       <div className="mb-8 lg:mb-12">
@@ -28,9 +30,11 @@ export default function SupperCategoryElectronicFeed() {
           </div>
 
           <div className="trendy-main-content w-full p-2.5">
-            <SupperCategoryContainer data ={products} isLoading={isLoading} error={error}/>
+            <SupperCategoryContainer data ={products} isLoading={false} error={""}/>
           </div>
         </div>
       </div>
   );
 }
+
+export default SupperCategoryElectronicFeed

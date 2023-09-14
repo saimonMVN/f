@@ -9,21 +9,29 @@ import {
     bannerDiscount as brandCarousel,
     homeFourGridHero2 as bannerGrid2,
 } from '@framework/static/banner';
-import {GetStaticProps} from 'next';
-import {QueryClient} from 'react-query';
-import {dehydrate} from 'react-query/hydration';
-import {API_ENDPOINTS} from '@framework/utils/api-endpoints';
+import {GetServerSideProps} from 'next';
 import LatestblogCarousel from "@components/common/latestblog-four";
-import {fetchBestSellerProducts} from '@framework/product/get-all-best-seller-products';
-import {LIMITS} from '@framework/utils/limits';
 import HeroSliderBlock from "@components/hero/hero-slider-block";
 import BannerGrid from "@components/common/banner-grid";
 import ListingTabsElectronicFeed from "@components/product/feeds/listingtabs-electronic-v2";
 import ListingTabsClothFeed from "@components/product/feeds/listingtabs-cloth-v2";
-
 import BestSellerProductFeed from "@components/product/feeds/best-seller-top-product";
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import { getCookieByCookiesKey } from '@utils/global';
+import { fetchProductsList } from '@lib/data';
+import { AppConst } from '@utils/app-const';
 
-export default function Home() {
+interface IHomeProductResponse {
+    products: PricedProduct[];
+    count: number;
+    nextPage?:null | number;
+    prePage?:null | number
+}
+interface IHomeProps {
+    response: IHomeProductResponse;
+}
+
+export default function Home({response}: IHomeProps) {
     return (
         <>
             <Seo
@@ -46,9 +54,9 @@ export default function Home() {
                     grid={3}
                     className="mb-8 lg:mb-12"
                 />
-                <BestSellerProductFeed  />
 
-                <ListingTabsElectronicFeed />
+                <BestSellerProductFeed products={response.products}  />
+                <ListingTabsElectronicFeed showBanner='right' colSiderbar={false} category={undefined} products={response.products} />
 
                 <BannerGrid
                     data={bannerGrid2}
@@ -56,8 +64,7 @@ export default function Home() {
                     className="mb-8 lg:mb-12"
                 />
 
-                <ListingTabsClothFeed colSiderbar={false}/>
-
+                <ListingTabsClothFeed showBanner='left' colSiderbar={false} category={undefined} products={response.products}/>
                 <LatestblogCarousel className="mb-8 lg:mb-12"/>
 
             </Container>
@@ -67,27 +74,36 @@ export default function Home() {
 
 Home.Layout = Layout;
 
-export const getStaticProps: GetStaticProps = async ({locale}) => {
-    const queryClient = new QueryClient();
+export const getServerSideProps: GetServerSideProps<IHomeProps> = async ({ locale, req }) => {
+    try {
+      const cookies = req.headers.cookie || ""
+      const cart_id = getCookieByCookiesKey(AppConst.CART_COOKIES_ID, cookies) as string;
 
-    await queryClient.prefetchQuery(
-        [
-            API_ENDPOINTS.BEST_SELLER_PRODUCTS,
-            {limit: LIMITS.BEST_SELLER_PRODUCTS_LIMITS},
-        ],
-        fetchBestSellerProducts
-    );
-
-    return {
-        props: {
-            dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
-            ...(await serverSideTranslations(locale!, [
-                'common',
-                'forms',
-                'menu',
-                'footer',
-            ])),
-        },
-        revalidate: 60,
+        const res = await fetchProductsList({
+          queryParams: {
+            cart_id,
+          },
+        });
+    
+        const productsData = res.response;
+        return {
+          props: {
+            response: {...productsData, nextPage:res.nextPage, prePage:res.prePage},
+            ...(await serverSideTranslations(locale!, ['common', 'forms', 'menu', 'footer'])),
+          },
+        };
+      } catch (error) {
+        return {
+          props: {
+            response: {
+              products: [],
+              count: 0,
+              nextPage:null,
+              prePage:null
+            },
+            ...(await serverSideTranslations(locale!, ['common', 'forms', 'menu', 'footer'])),
+          },
+        };
+      }
     };
-};
+    

@@ -10,7 +10,7 @@ import {
     homeFourGridHero2 as bannerGrid2,
     homeSevenHeroCarousel as bannerHeroCarousel,
 } from '@framework/static/banner';
-import {GetStaticProps} from 'next';
+import {GetServerSideProps, GetStaticProps} from 'next';
 import {QueryClient} from 'react-query';
 import {dehydrate} from 'react-query/hydration';
 import {API_ENDPOINTS} from '@framework/utils/api-endpoints';
@@ -29,8 +29,22 @@ import CategoryGridBlock from "@components/common/category-grid-block";
 import BannerAllCarousel from "@components/common/banner-all-carousel";
 import NewProductFeed from "@components/product/feeds/new-product-feed";
 import BestSellerProductFeed from "@components/product/feeds/best-seller-top-product";
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import { getCookieByCookiesKey } from '@utils/global';
+import { AppConst } from '@utils/app-const';
+import { fetchProductsList } from '@lib/data';
 
-export default function Home() {
+interface IHomeProductResponse {
+    products: PricedProduct[];
+    count: number;
+    nextPage?:null | number;
+    prePage?:null | number
+}
+interface IHomeProps {
+    response: IHomeProductResponse;
+}
+
+export default function Home({response}: IHomeProps) {
     return (
         <>
             <Seo
@@ -56,8 +70,8 @@ export default function Home() {
                 </div>
                 <FeatureCarousel className={"home4-featuredCarousel"} classNameCarousel={"bg-white"}/>
 
-                <ListingTabsPhonesFeed showBanner={'left'} />
-                <ListingTabsComputerFeed showBanner={'right'} />
+                <ListingTabsPhonesFeed showBanner={'left'} colSiderbar={false} category={undefined} products={response.products} />
+                <ListingTabsComputerFeed showBanner={'right'} colSiderbar={false} category={undefined} products={response.products} />
 
                 <BannerGrid
                     data={bannerGrid2}
@@ -65,8 +79,8 @@ export default function Home() {
                     className="mb-8 lg:mb-12"
                 />
 
-                <ListingTabsElectronicFeed showBanner={'left'}/>
-                <ListingTabsClothFeed showBanner={'right'}/>
+                <ListingTabsElectronicFeed showBanner={'left'} colSiderbar={false} category={undefined} products={response.products} />
+                <ListingTabsClothFeed showBanner={'right'} colSiderbar={false} category={undefined} products={response.products} />
 
                 <LatestblogCarousel className="mb-8 lg:mb-12"/>
                 <BannerAllCarousel
@@ -81,27 +95,36 @@ export default function Home() {
 
 Home.Layout = Layout;
 
-export const getStaticProps: GetStaticProps = async ({locale}) => {
-    const queryClient = new QueryClient();
+export const getServerSideProps: GetServerSideProps<IHomeProps> = async ({ locale, req }) => {
+    try {
+      const cookies = req.headers.cookie || ""
+      const cart_id = getCookieByCookiesKey(AppConst.CART_COOKIES_ID, cookies) as string;
 
-    await queryClient.prefetchQuery(
-        [
-            API_ENDPOINTS.BEST_SELLER_PRODUCTS,
-            {limit: LIMITS.BEST_SELLER_PRODUCTS_LIMITS},
-        ],
-        fetchBestSellerProducts
-    );
-
-    return {
-        props: {
-            dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
-            ...(await serverSideTranslations(locale!, [
-                'common',
-                'forms',
-                'menu',
-                'footer',
-            ])),
-        },
-        revalidate: 60,
+        const res = await fetchProductsList({
+          queryParams: {
+            cart_id,
+          },
+        });
+    
+        const productsData = res.response;
+        return {
+          props: {
+            response: {...productsData, nextPage:res.nextPage, prePage:res.prePage},
+            ...(await serverSideTranslations(locale!, ['common', 'forms', 'menu', 'footer'])),
+          },
+        };
+      } catch (error) {
+        return {
+          props: {
+            response: {
+              products: [],
+              count: 0,
+              nextPage:null,
+              prePage:null
+            },
+            ...(await serverSideTranslations(locale!, ['common', 'forms', 'menu', 'footer'])),
+          },
+        };
+      }
     };
-};
+    

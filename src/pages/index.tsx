@@ -9,14 +9,8 @@ import {
     bannersGridHero2 as bannerTwo2,
     homeTwoHeroBanner as heroBanner
 } from '@framework/static/banner';
-import {GetStaticProps} from 'next';
+import {GetServerSideProps } from 'next';
 import Seo from '@components/seo/seo';
-import {QueryClient} from 'react-query';
-import {dehydrate} from 'react-query/hydration';
-import {API_ENDPOINTS} from '@framework/utils/api-endpoints';
-import {fetchCategories} from '@framework/category/get-all-categories';
-import {fetchPopularProducts} from '@framework/product/get-all-popular-products';
-import {LIMITS} from '@framework/utils/limits';
 import HeroSliderBlock from "@components/hero/hero-slider-block";
 import FeatureCarousel from "@components/common/featured-carousel";
 import BannerGridTwo from "@components/common/banner-grid-two";
@@ -25,9 +19,23 @@ import CategoryGridListBlock from "@components/common/category-grid-list-block";
 
 import SupperCategoryElectronicFeed from "@components/product/feeds/suppercategory-electronic-feed";
 import SupperCategoryClothFeed from "@components/product/feeds/suppercategory-cloth-feed";
-import {fetchBestSellerProducts} from "@framework/product/get-all-best-seller-products";
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import { getCookieByCookiesKey } from '@utils/global';
+import { AppConst } from '@utils/app-const';
+import { fetchProductsList } from '@lib/data';
 
-export default function Home() {
+interface IHomeProductResponse {
+    products: PricedProduct[];
+    count: number;
+    nextPage?:null | number;
+    prePage?:null | number
+  }
+  
+  interface IHomeProps {
+    response: IHomeProductResponse;
+  }
+
+export default function Home({response}: IHomeProps) {
     return (
         <>
             <Seo
@@ -43,20 +51,20 @@ export default function Home() {
                     contentClassName="p-5 sm:pb-24 xl:pb-32 sm:pt-16 xl:pt-24"
                 />
                 <FeatureCarousel/>
-                <BestSellerProductFeed/>
+                <BestSellerProductFeed products={response.products} />
                 <BannerGridTwo
                     data={bannerTwo}
                     className="mb-8 lg:mb-12"
                     girdClassName="xl:gap-5 "
                 />
-                <SupperCategoryElectronicFeed />
+                <SupperCategoryElectronicFeed products={response.products} />
                 <BannerGridTwo
                     data={bannerTwo2}
                     className="mb-8 lg:mb-12"
                     girdClassName="xl:gap-5 2xl:grid-cols-[minmax(1130px,_1fr)_1fr] "
                 />
-                <SupperCategoryClothFeed />
-                <CategoryGridListBlock  className="mb-6 lg:mb-8" />
+                <SupperCategoryClothFeed products={response.products} />
+                {/* <CategoryGridListBlock  className="mb-6 lg:mb-8" /> */}
                 <BannerAllCarousel
                     data={bannerDiscount}
                     className="mb-8 lg:mb-12"
@@ -70,36 +78,36 @@ export default function Home() {
 
 Home.Layout = Layout;
 
-export const getStaticProps: GetStaticProps = async ({locale}) => {
-    const queryClient = new QueryClient();
+export const getServerSideProps: GetServerSideProps<IHomeProps> = async ({ locale, req }) => {
+    try {
+      const cookies = req.headers.cookie || ""
+      const cart_id = getCookieByCookiesKey(AppConst.CART_COOKIES_ID, cookies) as string;
 
-    await queryClient.prefetchQuery(
-        [API_ENDPOINTS.CATEGORIES, {limit: LIMITS.CATEGORIES_LIMITS}],
-        fetchCategories
-    );
-
-    await queryClient.prefetchQuery(
-        [
-            API_ENDPOINTS.BEST_SELLER_PRODUCTS, {limit: LIMITS.BEST_SELLER_PRODUCTS_LIMITS},
-        ],
-        fetchBestSellerProducts
-    );
-
-    await queryClient.prefetchQuery(
-        [API_ENDPOINTS.POPULAR_PRODUCTS, {limit: LIMITS.POPULAR_PRODUCTS_LIMITS}],
-        fetchPopularProducts
-    );
-
-    return {
-        props: {
-            dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
-            ...(await serverSideTranslations(locale!, [
-                'common',
-                'forms',
-                'menu',
-                'footer',
-            ])),
-        },
-        revalidate: 60,
+        const res = await fetchProductsList({
+          queryParams: {
+            cart_id,
+          },
+        });
+    
+        const productsData = res.response;
+        return {
+          props: {
+            response: {...productsData, nextPage:res.nextPage, prePage:res.prePage},
+            ...(await serverSideTranslations(locale!, ['common', 'forms', 'menu', 'footer'])),
+          },
+        };
+      } catch (error) {
+        return {
+          props: {
+            response: {
+              products: [],
+              count: 0,
+              nextPage:null,
+              prePage:null
+            },
+            ...(await serverSideTranslations(locale!, ['common', 'forms', 'menu', 'footer'])),
+          },
+        };
+      }
     };
-};
+    

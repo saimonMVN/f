@@ -30,16 +30,20 @@ import {AppConst} from "@utils/app-const";
 import {useCart} from "medusa-react";
 import {useElectronicProductsQuery} from "@framework/product/get-all-electronic-products";
 import {medusaClient} from "@lib/config";
+import { fetchProductsList } from '@lib/data';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+interface IHomeProductResponse {
+    products: PricedProduct[];
+    count: number;
+    nextPage?:null | number;
+    prePage?:null | number
+  }
+  
+  interface IHomeProps {
+    response: IHomeProductResponse;
+  }
 
-export default function Home() {
-
-    // const {cart}=useCart()
-    // const {data:Products, isLoading} = useElectronicProductsQuery({
-    //     limit: LIMITS.ELETRONIC_PRODUCTS_LIMITS,
-    //     // @ts-ignore
-    //     cart_id:cart?.id
-    // });
-
+export default function Home({response}: IHomeProps) {
     return (
         <>
             <Seo
@@ -63,7 +67,7 @@ export default function Home() {
                     />
                 </div>
                 <FeatureCarousel/>
-                <BestSellerProductFeed/>
+                <BestSellerProductFeed products={response.products} />
                 <BannerGridTwo
                     data={bannerTwo}
                     className="mb-8 lg:mb-12"
@@ -71,15 +75,15 @@ export default function Home() {
                 />
                 {/*@ts-ignore*/}
 
-                <ListingTabsElectronicFeed products={Products.products} colSiderbar={false} borderCarousel={true}/>
+                <ListingTabsElectronicFeed products={response.products} colSiderbar={false} borderCarousel={true}/>
 
                 <BannerGridTwo
                     data={bannerTwo2}
                     className="mb-8 lg:mb-12"
                     girdClassName="xl:gap-5 2xl:grid-cols-[minmax(1130px,_1fr)_1fr] "
                 />
-                <ListingTabsClothFeed colSiderbar={false}/>
-                <CategoryGridListBlock  className="mb-6 lg:mb-8" />
+                <ListingTabsClothFeed products={response.products} colSiderbar={false} category={undefined}/>
+                {/* <CategoryGridListBlock  className="mb-6 lg:mb-8" /> */}
                 <BannerAllCarousel
                     data={bannerDiscount}
                     className="mb-8 lg:mb-12"
@@ -91,30 +95,36 @@ export default function Home() {
 
 Home.Layout = Layout;
 
-export const getServerSideProps: GetServerSideProps = async ({locale,req}) => {
-    const queryClient = new QueryClient();
-    const cookies = req.headers.cookie || ""
-    const cart_id = getCookieByCookiesKey(AppConst.CART_COOKIES_ID, cookies);
+export const getServerSideProps: GetServerSideProps<IHomeProps> = async ({ locale, req }) => {
+    try {
+      const cookies = req.headers.cookie || ""
+      const cart_id = getCookieByCookiesKey(AppConst.CART_COOKIES_ID, cookies) as string;
 
-
-    await queryClient.prefetchQuery(
-        [
-            API_ENDPOINTS.BEST_SELLER_PRODUCTS,
-            {limit: LIMITS.BEST_SELLER_PRODUCTS_LIMITS},
-        ],
-        fetchBestSellerProducts
-    );
-
-    return {
-        props: {
-            dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
-            ...(await serverSideTranslations(locale!, [
-                'common',
-                'forms',
-                'menu',
-                'footer',
-            ])),
-        },
-
+        const res = await fetchProductsList({
+          queryParams: {
+            cart_id,
+          },
+        });
+    
+        const productsData = res.response;
+        return {
+          props: {
+            response: {...productsData, nextPage:res.nextPage, prePage:res.prePage},
+            ...(await serverSideTranslations(locale!, ['common', 'forms', 'menu', 'footer'])),
+          },
+        };
+      } catch (error) {
+        return {
+          props: {
+            response: {
+              products: [],
+              count: 0,
+              nextPage:null,
+              prePage:null
+            },
+            ...(await serverSideTranslations(locale!, ['common', 'forms', 'menu', 'footer'])),
+          },
+        };
+      }
     };
-};
+    
