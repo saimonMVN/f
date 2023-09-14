@@ -8,7 +8,7 @@ import {productPlaceholder} from '@assets/placeholders';
 import ProgressCard from '@components/ui/progress-card';
 import {useTranslation} from 'react-i18next';
 
-interface ProductProps {
+interface IProductCardProps {
     product: Product;
     className?: string;
     date?: string | number | Date | undefined;
@@ -45,7 +45,7 @@ const renderer = ({days, hours, minutes, seconds, completed}: any) => {
     }
 };
 
-const ProductFlashSellCard: React.FC<ProductProps> = ({
+const ProductFlashSellCard: React.FC<IProductCardProps> = ({
                                                           product,
                                                           className,
                                                           date,
@@ -74,7 +74,7 @@ const ProductFlashSellCard: React.FC<ProductProps> = ({
     return (
         <article
             className={cn(
-                'flex flex-col justify-between group cursor-pointer relative px-4 lg:px-4 ',
+                'grid grid-cols-7 justify-between group cursor-pointer relative px-4 lg:px-4 ',
                 className
             )}
             onClick={handlePopupView}

@@ -1,10 +1,8 @@
 import SectionHeader from '@components/common/section-header';
 import ProductCard from '@components/product/product-cards/product-card-v2';
-import { Product } from '@framework/types';
 import Carousel from '@components/ui/carousel/carousel';
 import { SwiperSlide } from '@components/ui/carousel/slider';
 import Alert from '@components/ui/alert';
-import SeeAll from '@components/ui/see-all';
 import useWindowSize from '@utils/use-window-size';
 import ProductCardLoader from '@components/ui/loaders/product-card-loader';
 import cn from 'classnames';
@@ -53,7 +51,6 @@ const breakpoints = {
 
 const ProductsCarousel: React.FC<ProductsCarouselProps> = ({
   sectionHeading,
-  categorySlug,
   className = '',
   products,
   loading,

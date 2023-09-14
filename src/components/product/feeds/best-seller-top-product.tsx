@@ -1,5 +1,4 @@
 import ProductsCarousel from '@components/product/products-carousel-v2';
-import { useBestSellerProductsQuery } from '@framework/product/get-all-best-seller-products';
 import { LIMITS } from '@framework/utils/limits';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { ROUTES } from '@utils/routes';

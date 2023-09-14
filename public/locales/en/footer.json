@@ -45,5 +45,6 @@
   "payment-paypal": "Paypal",
   "payment-jcb": "JCB",
   "payment-skrill": "Skrill",
-  "end": "end"
+  "end": "end",
+  "text-layout4-subscribe": "Subscribe"
 }

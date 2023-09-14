@@ -12,7 +12,7 @@ import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { ProductPreviewType } from '@interfaces/global';
 import { isSingleVariantInStockOrBackorder } from '@lib/util/is-single-variant-inStock-or-backorder';
 
-interface ProductProps {
+interface IProductCardProps {
   previewProduct: ProductPreviewType;
   pricedProduct: PricedProduct;
   className?: string
@@ -21,7 +21,7 @@ interface ProductProps {
 function RenderPopupOrAddToCart({
   previewProduct,
   pricedProduct,
-}: ProductProps) {
+}: IProductCardProps) {
   const { t } = useTranslation('common');
   const { id, ...rest } = pricedProduct ?? {};
   const { width } = useWindowSize();
@@ -56,7 +56,7 @@ const ProductCard = ({
   previewProduct,
   pricedProduct,
   className
-}: ProductProps) => {
+}: IProductCardProps) => {
   const { openModal } = useModalAction();
   const { t } = useTranslation('common');
   const { width } = useWindowSize();

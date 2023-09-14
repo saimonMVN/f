@@ -1,5 +1,4 @@
 import type { FC } from 'react';
-import {useNewArrivalProductsQuery} from '@framework/product/get-all-new-arrival-products';
 import ProductsListBlock from '../products-list-four';
 import { LIMITS } from '@framework/utils/limits';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';

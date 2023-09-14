@@ -19,7 +19,7 @@ export default function ListingTabsElectronicFeed(props: BoxProps) {
       <div className="mb-8">
         <div className="listing-tabs">
           <ListingTabsList className={`ltabs-heading`} data={data}/>
-          <ListingTabsContainer products={props.products} isLoading={false} colSiderbar={colSiderbar}/>
+          <ListingTabsContainer products={props.products} isLoading={false} colSiderbar={colSiderbar} />
         </div>
       </div>
   );

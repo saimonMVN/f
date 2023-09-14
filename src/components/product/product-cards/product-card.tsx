@@ -12,7 +12,7 @@ import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { ProductPreviewType } from 'src/interfaces/global';
 import { isSingleVariantInStockOrBackorder } from 'src/lib/util/is-single-variant-inStock-or-backorder';
 
-interface ProductProps {
+interface IProductCardProps {
   previewProduct: ProductPreviewType;
   pricedProduct: PricedProduct;
   className?: string
@@ -20,10 +20,9 @@ interface ProductProps {
 function RenderPopupOrAddToCart({
   previewProduct,
   pricedProduct,
-}: ProductProps) {
+}: IProductCardProps) {
   const { t } = useTranslation('common');
-  const { id, ...rest } = pricedProduct ?? {};
-  const { width } = useWindowSize();
+  const { id, variants, ...rest } = pricedProduct ?? {};
   const { openModal } = useModalAction();
   function handlePopupView() {
     openModal('PRODUCT_VIEW', {
@@ -31,10 +30,10 @@ function RenderPopupOrAddToCart({
       previewProduct: previewProduct,
     });
   }
-  if (isSingleVariantInStockOrBackorder(pricedProduct.variants) && pricedProduct.variants[0].id) {
-    return <AddToCart variantId = {pricedProduct.variants[0].id} quantity = {1} />
+  if (isSingleVariantInStockOrBackorder(variants) && variants[0].id) {
+    return <AddToCart variantId = {variants[0].id} quantity = {1} />
   } 
-  else if(pricedProduct.variants.length > 1){
+  else if(variants.length > 1){
     return (
       <button
       className="min-w-[150px] px-4 py-2 bg-skin-primary rounded text-skin-inverted text-[13px] items-center justify-center focus:outline-none focus-visible:outline-none"
@@ -57,7 +56,7 @@ const ProductCard = ({
   previewProduct,
   pricedProduct,
   className
-}: ProductProps) => {
+}: IProductCardProps) => {
   const { openModal } = useModalAction();
   const { t } = useTranslation('common');
   const { width } = useWindowSize();
@@ -66,8 +65,6 @@ const ProductCard = ({
   function handlePopupView() {
     openModal('PRODUCT_VIEW', { pricedProduct, previewProduct });
   }
-
-
   return (
     <article
     className={cn(

@@ -10,6 +10,9 @@ import {getDirection} from "@utils/get-direction";
 import useWindowSize from "@utils/use-window-size";
 import {useRouter} from "next/router";
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import { ProductProvider } from '@lib/context/product-context';
+import { useCart } from 'medusa-react';
+import usePreviews from '@lib/hooks/use-previews';
 
 interface ProductsProps {
     sectionHeading: string;
@@ -51,9 +54,10 @@ const ProductsListBlock: React.FC<ProductsProps> = ({
     uniqueKey,
      }) => {
     const {width} = useWindowSize();
-    const {locale} = useRouter();
-    const dir = getDirection(locale);
     if(width!  < 767 ) limit = 5;
+    const { cart } = useCart()
+    const previews = usePreviews({ products, region: cart?.region })
+
     return (
         <div className={`${className}`}>
             {
@@ -88,12 +92,12 @@ const ProductsListBlock: React.FC<ProductsProps> = ({
                             ))
                         ) : (
                             <>
-                                {products?.slice(0, limit).map((product: any, idx) => (
+                                 {products && previews?.slice(0, limit).map((product, idx) => (
                                     <SwiperSlide
                                         key={`${uniqueKey}-${idx}`}
                                         className="pt-5 pb-3 "
                                     >
-                                        <ProductList product={product}/>
+                                     <ProductProvider product={products[idx]}><ProductList pricedProduct={products[idx]} previewProduct={product} /></ProductProvider>
                                     </SwiperSlide>
                                 ))}
 

@@ -22,9 +22,7 @@ interface ProductSingleDetailsProps {
     product: PricedProduct;
 }
 
-const ProductSingleDetails: React.FC<ProductSingleDetailsProps> = ({
-                                                                       product,
-                                                                   }) => {
+const ProductSingleDetails: React.FC<ProductSingleDetailsProps> = ({ product }) => {
     const router = useRouter();
     useState<boolean>(false);
     const [shareButtonStatus, setShareButtonStatus] = useState<boolean>(false);
