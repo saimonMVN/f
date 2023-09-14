@@ -24,9 +24,9 @@ interface ISearchProductResponse {
 }
 
 interface SearchProps {
-  products: ISearchProductResponse;
+  response: ISearchProductResponse;
 }
-export default function Search({products}: SearchProps) {
+export default function Search({response}: SearchProps) {
   const [viewAs, setViewAs] = useState(Boolean(true));
 
 
@@ -48,7 +48,7 @@ export default function Search({products}: SearchProps) {
             </div>
             <div className="w-full lg:-ms-2 xl:-ms-8 lg:-mt-1">
               <SearchTopBar viewAs={viewAs} onNavClick={setViewAs}/>
-              <ProductGrid products={products} key="prouctGrid" viewAs={viewAs}/>
+              <ProductGrid products={response} key="prouctGrid" viewAs={viewAs}/>
             </div>
           </Element>
         </Container>
@@ -83,18 +83,17 @@ export const getServerSideProps: GetServerSideProps<SearchProps> = async ({ loca
       },
     });
 
-    const productsData: ISearchProductResponse = res.response;
-
+    const productsData = res.response;
     return {
       props: {
-        products: {...productsData, nextPage:res.nextPage, prePage:res.prePage},
+        response: {...productsData, nextPage:res.nextPage, prePage:res.prePage},
         ...(await serverSideTranslations(locale!, ['common', 'forms', 'menu', 'footer'])),
       },
     };
   } catch (error) {
     return {
       props: {
-        products: {
+        response: {
           products: [],
           count: 0,
           nextPage:null,

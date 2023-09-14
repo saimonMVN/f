@@ -1,15 +1,18 @@
 import SectionHeader from '@components/common/section-header';
 import ProductCard from '@components/product/product-cards/product-card';
 import ProductCardLoader from '@components/ui/loaders/product-card-loader';
-import { Product } from '@framework/types';
 import Alert from '@components/ui/alert';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import { useCart } from 'medusa-react';
+import usePreviews from '@lib/hooks/use-previews';
+import { ProductProvider } from '@lib/context/product-context';
 
 interface ProductsProps {
   sectionHeading: string;
   sectionSubHeading?: string;
   headingPosition?: 'left' | 'center';
   className?: string;
-  products?: Product[];
+  products?: PricedProduct[];
   loading: boolean;
   error?: string;
   limit?: number;
@@ -27,6 +30,11 @@ const ProductsGridBlock: React.FC<ProductsProps> = ({
   limit,
   uniqueKey,
 }) => {
+
+  const { cart } = useCart()
+
+  const previews = usePreviews({ products, region: cart?.region })
+
   return (
     <div className={`${className}`}>
       <SectionHeader
@@ -45,8 +53,10 @@ const ProductsGridBlock: React.FC<ProductsProps> = ({
             />
           ))
         ) : (
-          products?.map((product: any) => (
-            <ProductCard key={`${uniqueKey}-${product.id}`} product={product} />
+          products && previews?.slice(0, limit).map((product, idx) => (
+            <ProductProvider key={`${uniqueKey}-${product.id}`} product={products[idx]}>
+              <ProductCard pricedProduct={products[idx]} previewProduct={product} />
+            </ProductProvider>
           ))
         )}
       </div>

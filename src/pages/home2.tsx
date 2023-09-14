@@ -114,7 +114,6 @@ export const getServerSideProps: GetServerSideProps<
                 limit:AppConst.PRODUCT_LIMIT
             },
         });
-
         if (
             !res.ok
         ) {

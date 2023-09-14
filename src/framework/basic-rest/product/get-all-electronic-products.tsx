@@ -7,7 +7,7 @@ import shuffle from "lodash/shuffle";
 export const fetchElectronictablesProducts = async ({ queryKey }: any) => {
   const [_key, _params] = queryKey;
   const { data } = await http.get(API_ENDPOINTS.ELETRONIC_PRODUCTS);
-  return shuffle(data) as Product[];
+  return data as Product[];
 };
 export const useElectronicProductsQuery = (options: QueryOptionsType) => {
   return useQuery<Product[], Error>(

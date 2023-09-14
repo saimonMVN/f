@@ -1,19 +1,21 @@
 import SectionHeader from '@components/common/section-header';
 import ProductList from '@components/product/product-cards/product-list';
 import ProductCardLoader from '@components/ui/loaders/product-card-loader';
-import {Product} from '@framework/types';
 import Alert from '@components/ui/alert';
 import Carousel from "@components/ui/carousel/carousel";
 import {SwiperSlide} from "@components/ui/carousel/slider";
-import SeeAll from "@components/ui/see-all";
 import {getDirection} from "@utils/get-direction";
 import useWindowSize from "@utils/use-window-size";
 import {useRouter} from "next/router";
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import { ProductProvider } from '@lib/context/product-context';
+import { useCart } from 'medusa-react';
+import usePreviews from '@lib/hooks/use-previews';
 
 interface ProductsProps {
     sectionHeading: string;
     className?: string;
-    products?: Product[];
+    products?: PricedProduct[];
     loading: boolean;
     error?: string;
     limit?: number;
@@ -40,10 +42,8 @@ const ProductsListBlock: React.FC<ProductsProps> = ({
     limit,
     uniqueKey,
      }) => {
-    const {width} = useWindowSize();
-    const {locale} = useRouter();
-    const dir = getDirection(locale);
-
+    const { cart } = useCart()
+    const previews = usePreviews({ products, region: cart?.region })
     return (
         <div className={`${className}`}>
             {
@@ -66,7 +66,6 @@ const ProductsListBlock: React.FC<ProductsProps> = ({
                         buttonGroupClassName="xs:-top-11 sm:-top-11"
                         prevButtonClassName="end-8 -translate-y-2 "
                         nextButtonClassName="end-0 -translate-y-2"
-
                     >
                         {loading && !products?.length ? (
                             Array.from({length: limit!}).map((_, idx) => (
@@ -79,12 +78,12 @@ const ProductsListBlock: React.FC<ProductsProps> = ({
                             ))
                         ) : (
                             <>
-                                {products?.slice(0, limit).map((product: any, idx) => (
+                                 {products && previews?.slice(0, limit).map((product, idx) => (
                                     <SwiperSlide
                                         key={`${uniqueKey}-${idx}`}
                                         className="py-1.5 "
                                     >
-                                        <ProductList product={product}/>
+                                     <ProductProvider product={products[idx]}><ProductList pricedProduct={products[idx]} previewProduct={product} /></ProductProvider>
                                     </SwiperSlide>
                                 ))}
 

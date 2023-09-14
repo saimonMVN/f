@@ -1,12 +1,9 @@
 import cn from 'classnames';
 import Image from '@components/ui/image';
 import Link from '@components/ui/link';
-import usePrice from '@framework/product/use-price';
-import { Product } from '@framework/types';
 import { useModalAction } from '@components/common/modal/modal.context';
 import useWindowSize from '@utils/use-window-size';
 import SearchIcon from '@components/icons/search-icon';
-import { useCart } from '@contexts/cart/cart.context';
 import { AddToCart } from '@components/product/add-to-cart';
 import { useTranslation } from 'next-i18next';
 import { productPlaceholder } from '@assets/placeholders';
@@ -14,19 +11,18 @@ import {ROUTES} from "@utils/routes";
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { ProductPreviewType } from 'src/interfaces/global';
 import { isSingleVariantInStockOrBackorder } from 'src/lib/util/is-single-variant-inStock-or-backorder';
-import Head from 'next/head';
 
-interface ProductProps {
+interface IProductCardProps {
   previewProduct: ProductPreviewType;
   pricedProduct: PricedProduct;
+  className?: string
 }
 function RenderPopupOrAddToCart({
   previewProduct,
   pricedProduct,
-}: ProductProps) {
+}: IProductCardProps) {
   const { t } = useTranslation('common');
-  const { id, ...rest } = pricedProduct ?? {};
-  const { width } = useWindowSize();
+  const { id, variants, ...rest } = pricedProduct ?? {};
   const { openModal } = useModalAction();
   function handlePopupView() {
     openModal('PRODUCT_VIEW', {
@@ -34,13 +30,13 @@ function RenderPopupOrAddToCart({
       previewProduct: previewProduct,
     });
   }
-  if (isSingleVariantInStockOrBackorder(pricedProduct.variants) && pricedProduct.variants[0].id) {
-    return <AddToCart variantId = {pricedProduct.variants[0].id} quantity = {1} />
+  if (isSingleVariantInStockOrBackorder(variants) && variants[0].id) {
+    return <AddToCart variantId = {variants[0].id} quantity = {1} />
   } 
-  else if(pricedProduct.variants.length > 1){
+  else if(variants.length > 1){
     return (
       <button
-      className="min-w-[150px] px-4 py-2 bg-skin-primary rounded-full  text-skin-inverted text-[13px] items-center justify-center focus:outline-none focus-visible:outline-none"
+      className="min-w-[150px] px-4 py-2 bg-skin-primary rounded text-skin-inverted text-[13px] items-center justify-center focus:outline-none focus-visible:outline-none"
       aria-label="Count Button"
         onClick={handlePopupView}
       >
@@ -60,11 +56,7 @@ const ProductCard = ({
   previewProduct,
   pricedProduct,
   className
-}: {
-  previewProduct: ProductPreviewType;
-  pricedProduct: PricedProduct;
-  className?: string
-}) => {
+}: IProductCardProps) => {
   const { openModal } = useModalAction();
   const { t } = useTranslation('common');
   const { width } = useWindowSize();
@@ -73,8 +65,6 @@ const ProductCard = ({
   function handlePopupView() {
     openModal('PRODUCT_VIEW', { pricedProduct, previewProduct });
   }
-
-
   return (
     <article
     className={cn(
@@ -112,7 +102,6 @@ const ProductCard = ({
 
       <div className="flex flex-col mb-2 h-full overflow-hidden text-center relative">
         <div className="text-sm mt-auto leading-6 text-gray-400 mb-1.5">
-                    {/* product collection  */}
                     {pricedProduct.collection?.title}
         </div>
         <Link

@@ -50,7 +50,7 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
               client: queryClient,
             }}
         >
-          <Hydrate state={pageProps.dehydratedState}>
+          <Hydrate state={pageProps}>
             <CartDropdownProvider>
               <CartProvider>
                 <StoreProvider>
