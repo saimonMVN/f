@@ -11,12 +11,7 @@ type BoxProps = {
 };
 
 export default function ListingTabsClothFeed(props: BoxProps) {
-
   const data = {name: "Demo Categories 2"}
-
-
-
-
   return (
       <div className="mb-8">
         <div className="listing-tabs" >
