@@ -102,7 +102,7 @@ const OrderDrawer: React.FC = () => {
                 </p>
               </div>
             </div>
-            <div className="text-end mt-12 opacity-50">
+            <div className="text-end mt-12">
               <span className="py-3 px-5 cursor-pointer inline-block text-[12px] md:text-[14px] text-black font-medium bg-white rounded border border-solid border-[#DEE5EA] me-4 hover:bg-[#F35C5C] hover:text-white hover:border-[#F35C5C] transition-all capitalize">
                 Report order
               </span>
