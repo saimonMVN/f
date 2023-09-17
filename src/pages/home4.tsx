@@ -69,7 +69,7 @@ export default function Home({response}: IHomeProps) {
                     grid={3}
                     className="mb-8 lg:mb-12"
                 />
-                {/* <CategoryGridBlock  className="mb-8 lg:mb-12" /> */}
+                <CategoryGridBlock  className="mb-8 lg:mb-12" />
                 {/* <SuppercategoryPopular className="mb-8 lg:mb-12"/> */}
                 <BestSellerProductFeed products={response.products} />
                 <BannerGrid

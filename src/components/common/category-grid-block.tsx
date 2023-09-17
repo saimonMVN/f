@@ -8,6 +8,8 @@ import useWindowSize from '@utils/use-window-size';
 import {LIMITS} from '@framework/utils/limits';
 import {useCategoriesQuery} from "@framework/category/get-all-categories";
 import CategoryListCardLoader from "@components/ui/loaders/category-list-card-loader";
+import { useProductCategories } from 'medusa-react';
+import CategoriesHelper from '@utils/SDK/CategoriesHelper';
 
 const Carousel = dynamic(() => import('@components/ui/carousel/carousel'), {
     ssr: false,
@@ -47,11 +49,13 @@ const breakpoints = {
 const CategoryGridBlock: React.FC<CategoriesProps> = ({
                                                           className = 'md:pt-3 lg:pt-0 3xl:pb-2 mb-12 sm:mb-14 md:mb-16 xl:mb-24 2xl:mb-16',
                                                       }) => {
-    const {width} = useWindowSize();
+    const {
+        product_categories,
+        isLoading,
+        error
+    } = useProductCategories({include_descendants_tree:true})
 
-    const {data, isLoading, error} = useCategoriesQuery({
-        limit: LIMITS.CATEGORIES_LIMITS,
-    });
+    const data = CategoriesHelper.getCategories(product_categories)
     return (
         <div className={className}>
             <SectionHeader
@@ -65,7 +69,7 @@ const CategoryGridBlock: React.FC<CategoriesProps> = ({
                     <Carousel
                         grid={{rows: 2, fill: 'row'}}
                         breakpoints={breakpoints}
-                        className="shopby-categories"
+                        className="shopby-categories bg-white"
                     >
                         {isLoading && !data
                             ? Array.from({length: 12}).map((_, idx) => {
@@ -75,7 +79,7 @@ const CategoryGridBlock: React.FC<CategoriesProps> = ({
                                     </SwiperSlide>
                                 );
                             })
-                            : data?.categories?.data?.slice(0, 12)?.map((category) => (
+                            : data?.slice(0, 12)?.map((category) => (
                                 <SwiperSlide key={`category--key-${category.id}`}>
                                     <CategoryCard
                                         item={category}
