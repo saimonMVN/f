@@ -10,6 +10,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import timezone from 'dayjs/plugin/timezone';
 import { GrNext, GrPrevious } from 'react-icons/gr';
 import { BsSearch } from 'react-icons/bs';
+import { Order } from '@medusajs/medusa';
 
 export const CreatedAt: React.FC<{ createdAt?: any }> = ({ createdAt }) => {
   dayjs.extend(relativeTime);
@@ -94,8 +95,8 @@ const OrderTable: React.FC<{ orders?: any }> = ({ orders }) => {
   const onChangeSearch = (e: any) => {
     setCurrentPage(1);
     let filter: any = orders
-      .filter((item: any) =>
-        item.tracking_number
+      .filter((item: Order) =>
+        item.id
           .toLowerCase()
           .includes(e.target.value.toLowerCase())
       )
@@ -125,7 +126,7 @@ const OrderTable: React.FC<{ orders?: any }> = ({ orders }) => {
             type="search"
             value={value}
             onChange={onChangeSearch}
-            placeholder="Search Order list"
+            placeholder="Search Order by Id"
             inputClassName=" h-[46px] w-full placeholder-[rgba(0, 0, 0, .3)] bg-white border border-[#E3E8EC] rounded-md order-search focus:border-2 focus:outline-none focus:border-skin-primary"
           />
         </form>

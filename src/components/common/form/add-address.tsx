@@ -281,7 +281,7 @@ const AddAddressForm: React.FC = () => {
           )}
 
         <div className="flex w-full justify-end gap-4">
-        {data.id && <Button className="h-11 md:h-12 mt-1.5" type="submit"  onClick={removeAddress}>
+        {data.id && <Button variant='border' className="h-11 md:h-12 mt-1.5" type="submit"  onClick={removeAddress}>
             {t('common:text-delete-address')}
             {submitting && <FaSpinner />}
           </Button>
