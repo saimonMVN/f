@@ -64,7 +64,7 @@ export default function Home({response}: IHomeProps) {
                     girdClassName="xl:gap-5 2xl:grid-cols-[minmax(1130px,_1fr)_1fr] "
                 />
                 <SupperCategoryClothFeed products={response.products} />
-                {/* <CategoryGridListBlock  className="mb-6 lg:mb-8" /> */}
+                <CategoryGridListBlock  className="mb-6 lg:mb-8" />
                 <BannerAllCarousel
                     data={bannerDiscount}
                     className="mb-8 lg:mb-12"

@@ -4,12 +4,10 @@ import SectionHeader from '@components/common/section-header';
 import {ROUTES} from '@utils/routes';
 import Alert from '@components/ui/alert';
 import {SwiperSlide} from 'swiper/react';
-import useWindowSize from '@utils/use-window-size';
-import {LIMITS} from '@framework/utils/limits';
-import {useCategoriesQuery} from "@framework/category/get-all-categories";
 import CategoryListCardLoader from "@components/ui/loaders/category-list-card-loader";
 import { useProductCategories } from 'medusa-react';
 import CategoriesHelper from '@utils/SDK/CategoriesHelper';
+import { AppConst } from '@utils/app-const';
 
 const Carousel = dynamic(() => import('@components/ui/carousel/carousel'), {
     ssr: false,
@@ -79,7 +77,7 @@ const CategoryGridBlock: React.FC<CategoriesProps> = ({
                                     </SwiperSlide>
                                 );
                             })
-                            : data?.slice(0, 12)?.map((category) => (
+                            : data?.slice(0, AppConst.CATEGORIES_LIMIT)?.map((category) => (
                                 <SwiperSlide key={`category--key-${category.id}`}>
                                     <CategoryCard
                                         item={category}
