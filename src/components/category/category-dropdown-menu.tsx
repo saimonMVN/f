@@ -20,7 +20,6 @@ const CategoryDropdownMenu: React.FC<ICategoryDropdownProps> = ({
      categories,
      loading
       }) => {
-
     return (
         <div className={cn('absolute z-30 w-72 lg:w-full ', className)}>
             <div className="max-h-full">

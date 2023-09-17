@@ -1,13 +1,14 @@
 import SectionHeader from '@components/common/section-header';
 import CategoryListCardLoader from '@components/ui/loaders/category-list-card-loader';
-import { useCategoriesQuery } from '@framework/category/get-all-categories';
 import Alert from '@components/ui/alert';
 import CategoryListCard from '@components/cards/category-list-card';
 import Carousel from '@components/ui/carousel/carousel';
 import { SwiperSlide } from 'swiper/react';
-import useWindowSize from '@utils/use-window-size';
 import cn from 'classnames';
 import { ROUTES } from '@utils/routes';
+import { useProductCategories } from 'medusa-react';
+import CategoriesHelper from '@utils/SDK/CategoriesHelper';
+import { AppConst } from '@utils/app-const';
 
 interface CategoriesProps {
   className?: string;
@@ -37,11 +38,13 @@ const breakpoints = {
 const CategoryGridListBlock: React.FC<CategoriesProps> = ({
   className = 'mb-8',
 }) => {
-  const { width } = useWindowSize();
-  const { data, isLoading, error } = useCategoriesQuery({
-    limit: 6,
-  });
-  const CATEGORIES_LIMITS = 6;
+  const {
+    product_categories,
+    isLoading,
+    error,
+} = useProductCategories({include_descendants_tree:true})
+
+const data = CategoriesHelper.getCategories(product_categories)
   return (
     <div className={cn(className)}>
         <SectionHeader sectionHeading="text-choose-categories" className="mb-6 block-title" />
@@ -69,7 +72,7 @@ const CategoryGridListBlock: React.FC<CategoriesProps> = ({
                         </SwiperSlide>
                       );
                     })
-                  : data?.categories?.data?.slice(0, CATEGORIES_LIMITS).map((category) => (
+                  : data?.slice(0, AppConst.CATEGORIES_LIMIT).map((category) => (
                       <SwiperSlide
                         key={`category--key-${category.id}`}
                         className=""

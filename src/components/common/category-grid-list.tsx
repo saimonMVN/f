@@ -5,6 +5,8 @@ import CategoryListCard from '@components/cards/category-list-card';
 import Scrollbar from '@components/ui/scrollbar';
 import cn from 'classnames';
 import { ROUTES } from '@utils/routes';
+import { useProductCategories } from 'medusa-react';
+import CategoriesHelper from '@utils/SDK/CategoriesHelper';
 
 interface CategoriesProps {
   className?: string;
@@ -15,9 +17,13 @@ const CategoryGridList: React.FC<CategoriesProps> = ({
   className = '',
   limit,
 }) => {
-  const { data, isLoading, error } = useCategoriesQuery({
-    limit: limit,
-  });
+  const {
+    product_categories,
+    isLoading,
+    error,
+} = useProductCategories({include_descendants_tree:true})
+
+const data = CategoriesHelper.getCategories(product_categories)
 
   return (
     <aside
@@ -41,7 +47,7 @@ const CategoryGridList: React.FC<CategoriesProps> = ({
                 );
               })
             ) : (
-              data?.categories?.data?.map((category) => (
+              data?.map((category) => (
                 <CategoryListCard
                   key={`category--key-${category.id}`}
                   category={category}
