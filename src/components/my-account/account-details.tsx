@@ -253,7 +253,6 @@ const AccountDetails: React.FC<MyInformationProps> = ({ customer }) => {
             </div>
             <div className="flex flex-col sm:flex-row -mx-1.5 md:-mx-2.5 space-y-4 sm:space-y-0">
             <PasswordInput
-                type="tel"
                 label={t('forms:label-old-password')}
                 {...registerAccountChange('old_password', {
                   required: 'forms:password-old-required',
